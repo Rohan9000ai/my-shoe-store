@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-beige: #f5e6d3;
+  --color-brown: #6b4226;
+  --color-espresso: #3e2723;
+  --color-gold: #c9a227;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  background-color: var(--color-beige);
+  color: var(--color-espresso);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
