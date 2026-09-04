@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import Link from "next/link";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
@@ -52,7 +52,12 @@ export default function LoginPage() {
       return;
     }
 
-    router.push("/");
+    // Fetch the fresh session (now containing the correct role) and
+    // route admins straight to the dashboard instead of the storefront.
+    const session = await getSession();
+    const destination = session?.user?.role === "admin" ? "/admin" : "/";
+
+    router.push(destination);
     router.refresh();
   };
 

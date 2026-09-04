@@ -1,6 +1,6 @@
 // Luxe Sole — Prisma Schema
-// Day 1: User model only. Other models (Product, Order, etc.) will be added
-// in later steps as we progress through the file plan.
+// Day 5: extends the schema with Category, Product, ProductCategory,
+// ProductImage, and ProductSize — matching the agreed database design.
 
 generator client {
   provider = "prisma-client-js"
@@ -17,6 +17,11 @@ enum Role {
   admin
 }
 
+enum ProductStatus {
+  available
+  unavailable
+}
+
 model User {
   id            String   @id @default(uuid())
   name          String   @db.VarChar(100)
@@ -27,5 +32,73 @@ model User {
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
 
+  products      Product[] @relation("ProductCreatedBy")
+
   @@map("users")
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  name      String   @unique @db.VarChar(100)
+  slug      String   @unique @db.VarChar(120)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  products  ProductCategory[]
+
+  @@map("categories")
+}
+
+model Product {
+  id          String        @id @default(uuid())
+  name        String        @db.VarChar(255)
+  description String        @db.Text
+  price       Decimal       @db.Decimal(10, 2)
+  discount    Decimal?      @db.Decimal(10, 2)
+  status      ProductStatus @default(available)
+  createdBy   String?       @map("created_by")
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  creator     User?             @relation("ProductCreatedBy", fields: [createdBy], references: [id])
+  categories  ProductCategory[]
+  images      ProductImage[]
+  sizes       ProductSize[]
+
+  @@map("products")
+}
+
+model ProductCategory {
+  productId  String @map("product_id")
+  categoryId String @map("category_id")
+
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([productId, categoryId])
+  @@map("product_categories")
+}
+
+model ProductImage {
+  id        String   @id @default(uuid())
+  productId String   @map("product_id")
+  imageUrl  String   @map("image_url") @db.Text
+  altText   String?  @map("alt_text") @db.VarChar(255)
+  position  Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("product_images")
+}
+
+model ProductSize {
+  id            String  @id @default(uuid())
+  productId     String  @map("product_id")
+  size          String  @db.VarChar(20)
+  stockQuantity Int     @default(0) @map("stock_quantity")
+  sku           String? @unique @db.VarChar(50)
+
+  product       Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("product_sizes")
 }

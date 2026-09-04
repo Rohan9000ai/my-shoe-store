@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
-import { signupSchema } from "@/lib/validations";
+import { registerSchema } from "@/lib/validations";
 
 export async function POST(request: Request) {
   try {
@@ -9,7 +9,9 @@ export async function POST(request: Request) {
 
     // Re-validate on the server — client-side Zod checks are for UX only,
     // never trusted as the source of truth (per project validation rules).
-    const result = signupSchema.safeParse(body);
+    // Uses registerSchema (no confirmPassword) since the client never
+    // sends that field — it's a UI-only check.
+    const result = registerSchema.safeParse(body);
 
     if (!result.success) {
       const firstIssue = result.error.issues[0];
