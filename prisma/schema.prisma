@@ -22,6 +22,19 @@ enum ProductStatus {
   unavailable
 }
 
+enum OrderStatus {
+  pending
+  confirmed
+  shipped
+  delivered
+  cancelled
+}
+
+enum PaymentMethod {
+  cod
+  online_contact
+}
+
 model User {
   id            String   @id @default(uuid())
   name          String   @db.VarChar(100)
@@ -33,6 +46,7 @@ model User {
   updatedAt     DateTime @updatedAt @map("updated_at")
 
   products      Product[] @relation("ProductCreatedBy")
+  orders        Order[]
 
   @@map("users")
 }
@@ -63,6 +77,7 @@ model Product {
   categories  ProductCategory[]
   images      ProductImage[]
   sizes       ProductSize[]
+  orderItems  OrderItem[]
 
   @@map("products")
 }
@@ -101,4 +116,44 @@ model ProductSize {
   product       Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@map("product_sizes")
+}
+
+model Order {
+  id             String        @id @default(uuid())
+  orderNumber    String        @unique @map("order_number") @db.VarChar(50)
+  userId         String?       @map("user_id")
+  status         OrderStatus   @default(pending)
+  subtotal       Decimal       @db.Decimal(10, 2)
+  tax            Decimal       @db.Decimal(10, 2)
+  deliveryCharge Decimal       @map("delivery_charge") @db.Decimal(10, 2)
+  total          Decimal       @db.Decimal(10, 2)
+  paymentMethod  PaymentMethod @default(cod) @map("payment_method")
+  name           String        @db.VarChar(100)
+  phone          String        @db.VarChar(20)
+  country        String        @default("Pakistan") @db.VarChar(50)
+  city           String        @db.VarChar(100)
+  address        String        @db.Text
+  createdAt      DateTime      @default(now()) @map("created_at")
+
+  user           User?         @relation(fields: [userId], references: [id])
+  items          OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id          String   @id @default(uuid())
+  orderId     String   @map("order_id")
+  productId   String   @map("product_id")
+  productName String   @map("product_name") @db.VarChar(255)
+  size        String   @db.VarChar(20)
+  unitPrice   Decimal  @map("unit_price") @db.Decimal(10, 2)
+  discount    Decimal? @db.Decimal(10, 2)
+  quantity    Int
+  lineTotal   Decimal  @map("line_total") @db.Decimal(10, 2)
+
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product     Product  @relation(fields: [productId], references: [id])
+
+  @@map("order_items")
 }

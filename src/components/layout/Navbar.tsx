@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import SidePanel from "@/components/layout/SidePanel";
+import CartButton from "@/components/layout/CartButton";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
@@ -16,7 +17,6 @@ const NAV_LINKS = [
 export default function Navbar() {
   const { data: session, status } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
-  const cartCount = 0; // Wired up once CartContext (src/context/CartContext.tsx) exists
 
   return (
     <>
@@ -56,25 +56,14 @@ export default function Navbar() {
           </nav>
 
           {/* Right: search, wishlist, cart, auth */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
             <button aria-label="Search" className="text-espresso hover:text-gold">
               🔍
             </button>
             <button aria-label="Wishlist" className="text-espresso hover:text-gold">
               ♡
             </button>
-            <Link
-              href="/cart"
-              aria-label="Cart"
-              className="relative text-espresso hover:text-gold"
-            >
-              🛍
-              {cartCount > 0 && (
-                <span className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-gold text-[10px] font-bold text-espresso">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
+            <CartButton />
 
             {status === "authenticated" ? (
               <div className="hidden items-center gap-3 md:flex">
