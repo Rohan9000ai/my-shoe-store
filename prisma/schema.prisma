@@ -157,3 +157,10 @@ model OrderItem {
 
   @@map("order_items")
 }
+
+model Settings {
+  key   String @id @db.VarChar(100)
+  value String @db.Text
+
+  @@map("settings")
+}

@@ -39,7 +39,9 @@ export default function AddToCartForm({
 
   const handleAddToCart = () => {
     if (!selectedSize) return;
-    addItem({ productId, name, price, discount, size: selectedSize, imageUrl }, quantity);
+      addItem(
+      { productId, name, price, discount, size: selectedSize, imageUrl, maxStock: selectedStock },
+      quantity);
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };

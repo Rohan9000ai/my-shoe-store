@@ -37,6 +37,9 @@ export default function CartItem({ item }: CartItemProps) {
           {item.name}
         </Link>
         <p className="mt-1 text-xs text-brown/50">Size: {item.size}</p>
+        {item.quantity >= item.maxStock && (
+          <p className="text-xs text-red-500">Max stock reached</p>
+        )}
         <p className="mt-1 text-sm font-semibold text-espresso">
           PKR {unitPrice.toLocaleString()}
         </p>
@@ -55,13 +58,15 @@ export default function CartItem({ item }: CartItemProps) {
         <span className="w-8 text-center text-sm">{item.quantity}</span>
         <button
           type="button"
+          disabled={item.quantity >= item.maxStock}
           onClick={() => updateQuantity(item.productId, item.size, item.quantity + 1)}
-          className="px-2 py-1 text-brown hover:text-gold"
+          className="px-2 py-1 text-brown hover:text-gold disabled:cursor-not-allowed disabled:opacity-30"
           aria-label="Increase quantity"
         >
           +
         </button>
       </div>
+
 
       <p className="w-24 flex-shrink-0 text-right text-sm font-semibold text-espresso">
         PKR {lineTotal.toLocaleString()}

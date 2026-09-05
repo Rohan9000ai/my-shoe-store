@@ -42,14 +42,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
       if (existingIndex !== -1) {
         const updated = [...prev];
+        const combinedQuantity = updated[existingIndex].quantity + quantity;
         updated[existingIndex] = {
           ...updated[existingIndex],
-          quantity: updated[existingIndex].quantity + quantity,
+          maxStock: item.maxStock,
+          quantity: Math.min(combinedQuantity, item.maxStock),
         };
         return updated;
       }
 
-      return [...prev, { ...item, quantity }];
+      return [...prev, { ...item, quantity: Math.min(quantity, item.maxStock) }];
     });
   };
 
@@ -60,7 +62,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const updateQuantity: CartContextValue["updateQuantity"] = (productId, size, quantity) => {
     setItems((prev) =>
       prev
-        .map((i) => (i.productId === productId && i.size === size ? { ...i, quantity } : i))
+        .map((i) =>
+          i.productId === productId && i.size === size
+            ? { ...i, quantity: Math.min(quantity, i.maxStock) }
+            : i
+        )
         .filter((i) => i.quantity > 0)
     );
   };
@@ -71,8 +77,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const subtotal = items.reduce((sum, i) => sum + (i.price - i.discount) * i.quantity, 0);
 
   return (
-    <CartContext.Provider
-      value={{ items, addItem, removeItem, updateQuantity, clearCart, itemCount, subtotal }}
+        <CartContext.Provider
+      value={{
+        items,
+        addItem,
+        removeItem,
+        updateQuantity,
+        clearCart,
+        itemCount,
+        subtotal,
+        isHydrated,
+      }}
     >
       {children}
     </CartContext.Provider>

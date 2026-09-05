@@ -8,6 +8,7 @@ export interface CartItem {
   discount: number;
   size: string;
   quantity: number;
+  maxStock: number;
   imageUrl?: string;
 }
 
@@ -19,4 +20,5 @@ export interface CartContextValue {
   clearCart: () => void;
   itemCount: number;
   subtotal: number;
+  isHydrated: boolean;
 }

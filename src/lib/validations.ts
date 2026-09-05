@@ -117,3 +117,41 @@ export const categorySchema = z.object({
 });
 
 export type CategoryInput = z.infer<typeof categorySchema>;
+
+// Checkout shipping address — matches the orders table's required fields
+// (name, phone, country, city, address per project validation rules).
+export const checkoutAddressSchema = z.object({
+  name: z.string().min(1, "Full name is required").max(100, "Name must be under 100 characters"),
+  phone: z.string().regex(phoneRegex, "Enter a valid phone number (e.g. +923001234567)"),
+  country: z.string().min(1, "Country is required"),
+  city: z.string().min(1, "City is required"),
+  address: z.string().min(1, "Complete address is required"),
+});
+
+export type CheckoutAddressInput = z.infer<typeof checkoutAddressSchema>;
+
+// Admin settings — simple key/value pairs (delivery charge, tax rate,
+// WhatsApp number, etc.) stored in the settings table.
+export const settingSchema = z.object({
+  key: z.string().min(1, "Setting key is required").max(100),
+  value: z.string().min(1, "Setting value is required"),
+});
+
+export type SettingInput = z.infer<typeof settingSchema>;
+
+// Place-order payload — reuses checkoutAddressSchema for the shipping
+// portion, since it's the same fields validated the same way.
+export const orderItemInputSchema = z.object({
+  productId: z.string().min(1),
+  size: z.string().min(1),
+  quantity: z.coerce.number().int().min(1),
+});
+
+export const orderSchema = z.object({
+  items: z.array(orderItemInputSchema).min(1, "Your cart is empty"),
+  shipping: checkoutAddressSchema,
+  paymentMethod: z.enum(["cod", "online_contact"]).default("cod"),
+});
+
+export type OrderInput = z.infer<typeof orderSchema>;
+
