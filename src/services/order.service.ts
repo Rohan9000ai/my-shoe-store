@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@prisma/client";
+import { getSettings } from "@/services/settings.service";
 
 interface OrderItemInput {
   productId: string;
@@ -46,21 +47,6 @@ async function generateOrderNumber(): Promise<string> {
   return `LS-${Date.now()}`;
 }
 
-async function getDeliverySettings() {
-  const rows = await prisma.settings.findMany({
-    where: { key: { in: ["delivery_charge", "free_delivery_threshold", "tax_rate"] } },
-  });
-
-  const map: Record<string, string> = {};
-  for (const row of rows) map[row.key] = row.value;
-
-  return {
-    deliveryCharge: Number(map.delivery_charge ?? 1500),
-    freeDeliveryThreshold: Number(map.free_delivery_threshold ?? 50000),
-    taxRate: Number(map.tax_rate ?? 0),
-  };
-}
-
 // Creates an order and decrements stock for every item, atomically.
 // If any item is out of stock, the whole transaction rolls back — no
 // partial orders, no stock silently disappearing.
@@ -71,8 +57,14 @@ export async function createOrder(input: CreateOrderInput) {
     throw new Error("Cannot place an order with no items");
   }
 
-  const { deliveryCharge: deliveryChargeSetting, freeDeliveryThreshold, taxRate } =
-    await getDeliverySettings();
+  // Uses the same shared settings service the checkout page's
+  // OrderSummary reads from, so the price shown and the price charged
+  // can never drift apart.
+  const {
+    deliveryCharge: deliveryChargeSetting,
+    freeDeliveryThreshold,
+    taxRate,
+  } = await getSettings();
 
   const orderNumber = await generateOrderNumber();
 

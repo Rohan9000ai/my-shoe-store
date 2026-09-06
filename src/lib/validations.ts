@@ -155,3 +155,18 @@ export const orderSchema = z.object({
 
 export type OrderInput = z.infer<typeof orderSchema>;
 
+// Admin order status update — restricted to the OrderStatus enum values.
+export const orderStatusUpdateSchema = z.object({
+  status: z.enum(["pending", "confirmed", "shipped", "delivered", "cancelled"]),
+});
+
+export type OrderStatusUpdateInput = z.infer<typeof orderStatusUpdateSchema>;
+
+// Sales report query filters — date range for the admin reports page/API.
+export const reportQuerySchema = z.object({
+  range: z.enum(["today", "week", "month", "custom"]).default("month"),
+  from: z.string().optional(),
+  to: z.string().optional(),
+});
+
+export type ReportQueryInput = z.infer<typeof reportQuerySchema>;
