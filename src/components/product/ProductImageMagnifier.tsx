@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type MouseEvent } from "react";
+import Image from "next/image";
 
 interface ProductImage {
   imageUrl: string;
@@ -48,11 +49,13 @@ export default function ProductImageMagnifier({
         onMouseLeave={() => setIsZooming(false)}
         onMouseMove={handleMouseMove}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src={activeImage.imageUrl}
           alt={activeImage.altText || productName}
-          className="h-full w-full object-cover"
+          fill
+          priority
+          sizes="(max-width: 1024px) 100vw, 50vw"
+          className="object-cover"
         />
 
         {/* Zoomed layer — shown on hover, follows cursor position */}
@@ -76,15 +79,16 @@ export default function ProductImageMagnifier({
               type="button"
               onClick={() => setSelectedIndex(index)}
               aria-label={`View image ${index + 1}`}
-              className={`h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border-2 ${
+              className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border-2 ${
                 index === selectedIndex ? "border-gold" : "border-transparent"
               }`}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src={img.imageUrl}
                 alt={img.altText || `${productName} thumbnail ${index + 1}`}
-                className="h-full w-full object-cover"
+                fill
+                sizes="64px"
+                className="object-cover"
               />
             </button>
           ))}

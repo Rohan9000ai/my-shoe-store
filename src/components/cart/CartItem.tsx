@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useCart } from "@/hooks/useCart";
 import type { CartItem as CartItemType } from "@/types/cart";
 
@@ -18,10 +19,15 @@ export default function CartItem({ item }: CartItemProps) {
 
   return (
     <div className="flex items-center gap-4 border-b border-brown/10 py-4 last:border-0">
-      <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-md bg-brown/5">
+      <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-md bg-brown/5">
         {item.imageUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={item.imageUrl} alt={item.name} className="h-full w-full object-cover" />
+          <Image
+            src={item.imageUrl}
+            alt={item.name}
+            fill
+            sizes="80px"
+            className="object-cover"
+          />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-xs text-brown/30">
             No image

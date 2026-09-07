@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 
 // Real product list — queries Supabase via Prisma. Each product's first
@@ -58,10 +59,11 @@ export default async function AdminProductsPage() {
                 <tr key={product.id} className="border-b border-brown/5 last:border-0">
                   <td className="px-4 py-3">
                     {thumbnail ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
+                      <Image
                         src={thumbnail}
                         alt={product.name}
+                        width={48}
+                        height={48}
                         className="h-12 w-12 rounded-md object-cover"
                       />
                     ) : (

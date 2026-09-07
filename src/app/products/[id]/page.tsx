@@ -1,11 +1,32 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import WhatsAppBubble from "@/components/layout/WhatsAppBubble";
 import ProductImageMagnifier from "@/components/product/ProductImageMagnifier";
 import AddToCartForm from "@/components/product/AddToCartForm";
 import { getProductById } from "@/services/product.service";
+import { buildMetadata, buildProductJsonLd } from "@/lib/seo";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { id: string };
+}): Promise<Metadata> {
+  const product = await getProductById(params.id);
+
+  if (!product) {
+    return buildMetadata({ title: "Product Not Found", noIndex: true });
+  }
+
+  return buildMetadata({
+    title: product.name,
+    description: product.description.slice(0, 155),
+    path: `/products/${product.id}`,
+    image: product.images[0]?.imageUrl,
+  });
+}
 
 export default async function ProductDetailPage({
   params,
@@ -22,9 +43,23 @@ export default async function ProductDetailPage({
   const discount = product.discount ? Number(product.discount) : 0;
   const finalPrice = discount > 0 ? price - discount : price;
   const primaryCategory = product.categories[0]?.category.name;
+  const totalStock = product.sizes.reduce((sum, s) => sum + s.stockQuantity, 0);
+
+  const productJsonLd = buildProductJsonLd({
+    id: product.id,
+    name: product.name,
+    description: product.description,
+    price: finalPrice,
+    imageUrl: product.images[0]?.imageUrl,
+    inStock: totalStock > 0,
+  });
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
       <Navbar />
 
       <main className="mx-auto max-w-7xl px-4 py-8">

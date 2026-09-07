@@ -79,6 +79,8 @@ model Product {
   sizes       ProductSize[]
   orderItems  OrderItem[]
 
+  @@index([status])
+  @@index([createdBy])
   @@map("products")
 }
 
@@ -90,6 +92,7 @@ model ProductCategory {
   category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
   @@id([productId, categoryId])
+  @@index([categoryId])
   @@map("product_categories")
 }
 
@@ -103,6 +106,7 @@ model ProductImage {
 
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
+  @@index([productId])
   @@map("product_images")
 }
 
@@ -115,6 +119,7 @@ model ProductSize {
 
   product       Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
+  @@index([productId])
   @@map("product_sizes")
 }
 
@@ -138,6 +143,9 @@ model Order {
   user           User?         @relation(fields: [userId], references: [id])
   items          OrderItem[]
 
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
   @@map("orders")
 }
 
@@ -155,6 +163,8 @@ model OrderItem {
   order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product     Product  @relation(fields: [productId], references: [id])
 
+  @@index([orderId])
+  @@index([productId])
   @@map("order_items")
 }
 

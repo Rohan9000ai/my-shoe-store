@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 
@@ -327,11 +328,12 @@ export default function ProductForm({
                   key={img.imageUrl}
                   className="group relative aspect-square overflow-hidden rounded-md border border-brown/10"
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <Image
                     src={img.imageUrl}
                     alt={img.altText || "Product image"}
-                    className="h-full w-full object-cover"
+                    fill
+                    sizes="(max-width: 1024px) 33vw, 150px"
+                    className="object-cover"
                   />
                   <button
                     type="button"

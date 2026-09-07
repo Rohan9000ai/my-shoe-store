@@ -61,6 +61,7 @@ export default async function AdminReportsPage({
           <input
             type="date"
             name="from"
+            required
             defaultValue={searchParams.from}
             className="rounded-md border border-brown/20 px-2 py-2 text-sm"
           />
@@ -68,6 +69,7 @@ export default async function AdminReportsPage({
           <input
             type="date"
             name="to"
+            required
             defaultValue={searchParams.to}
             className="rounded-md border border-brown/20 px-2 py-2 text-sm"
           />
