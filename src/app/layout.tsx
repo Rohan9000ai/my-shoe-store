@@ -4,7 +4,7 @@ import Providers from "./providers";
 import { buildOrganizationJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Luxe Sole — Handcrafted Luxury Footwear",
+  title: "Luxe Sole — Luxury Footwear",
   description:
     "Handcrafted shoes for the modern connoisseur, tailored from premium selected calfskin and designed in Milan.",
 };

@@ -9,7 +9,6 @@ const MENU_LINKS = [
   { label: "Kids", href: "/products?category=kids" },
   { label: "New Arrivals", href: "/products?category=new-arrivals" },
   { label: "Sale", href: "/products?category=sale", badge: "SALE" },
-  { label: "Accessories", href: "/products?category=accessories" },
 ];
 
 interface SidePanelProps {

@@ -121,7 +121,7 @@ export default function CheckoutPage() {
                 </div>
               </label>
               <p className="mt-3 text-xs text-brown/40">
-                For online bank transfers or credit cards, please contact us on WhatsApp.
+                For online bank transfers , please contact us on WhatsApp.
               </p>
             </div>
           </div>
@@ -142,21 +142,21 @@ export default function CheckoutPage() {
           </div>
         </form>
 
-        <div className="mt-10 grid grid-cols-1 gap-4 text-center text-xs text-brown/50 sm:grid-cols-3">
+        <div className="mt-9 grid grid-cols-1 gap-4 text-center text-xs text-brown/70 sm:grid-cols-3">
           <p>
-            🔒 100% Secure Checkout
-            <br />
-            Bank-Grade Encryption
+            100% Secure Packiging
+            <br /><br/>
+            Ensure Fast Delivery
           </p>
           <p>
-            ↺ Free Worldwide Returns
-            <br />
-            Complimentary return shipping
+            For Any Issue & Query Contact On Whatsapp
+            <br /><br/>
+            Years Of Experience In Business
           </p>
           <p>
             ✔ Authenticity Guaranteed
-            <br />
-            Hand-signed master craftsmanship
+            <br /><br/>
+             No Compromise On Quality
           </p>
         </div>
       </main>

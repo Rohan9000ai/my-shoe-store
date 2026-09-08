@@ -64,7 +64,7 @@ export default async function AdminOrderDetailPage({
 
           <div className="rounded-lg border border-brown/10 bg-white p-6 shadow-sm">
             <h2 className="text-xs font-semibold uppercase tracking-wide text-brown/40">
-              Atelier Delivery Address
+              Delivery Address
             </h2>
             <p className="mt-2 text-sm text-brown/70">{order.address}</p>
             <p className="text-sm text-brown/70">

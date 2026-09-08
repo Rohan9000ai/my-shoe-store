@@ -70,7 +70,7 @@ export default function LoginPage() {
           </h1>
           <h2 className="mt-4 text-lg font-semibold text-espresso">Welcome Back</h2>
           <p className="mt-1 text-sm text-brown/70">
-            Enter your credentials to access your master atelier drawer
+            Enter your credentials for Login
           </p>
         </div>
 
@@ -79,7 +79,7 @@ export default function LoginPage() {
             label="Email Address"
             type="email"
             name="email"
-            placeholder="concierge@luxesole.com"
+            placeholder="example@google.com"
             value={formData.email}
             onChange={handleChange("email")}
             error={errors.email}
@@ -115,24 +115,6 @@ export default function LoginPage() {
           <span className="text-xs text-brown/50">OR</span>
           <div className="h-px flex-1 bg-brown/10" />
         </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => signIn("google")}
-          >
-            Google
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => signIn("apple")}
-          >
-            Apple ID
-          </Button>
-        </div>
-
         <p className="mt-6 text-center text-sm text-brown/70">
           Don&apos;t have an account?{" "}
           <Link href="/signup" className="font-semibold text-gold hover:underline">

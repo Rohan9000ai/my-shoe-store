@@ -114,7 +114,7 @@ export default async function OrderConfirmationPage({
               href="/"
               className="rounded-md bg-gold px-6 py-3 text-sm font-semibold uppercase tracking-wide text-espresso hover:bg-gold/90"
             >
-              Track Order
+              For track Order contact on whatsapp
             </Link>
           </div>
         </div>

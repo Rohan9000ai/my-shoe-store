@@ -1,16 +1,53 @@
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 
-// Stats placeholder. Total Products is real (Product model exists as of
-// Day 5). Sales/Orders/Low Stock will switch from placeholders to real
-// queries once the Order model is added in a later step.
+const LOW_STOCK_THRESHOLD = 5;
+
+const STATUS_LABELS: Record<string, string> = {
+  pending: "Pending",
+  processing: "Processing",
+  packing: "Packing",
+  out_for_delivery: "Out for Delivery",
+  delivered: "Delivered",
+  cancelled: "Cancelled",
+};
+
+const STATUS_STYLES: Record<string, string> = {
+  pending: "bg-yellow-100 text-yellow-700",
+  processing: "bg-blue-100 text-blue-700",
+  packing: "bg-indigo-100 text-indigo-700",
+  out_for_delivery: "bg-purple-100 text-purple-700",
+  delivered: "bg-green-100 text-green-700",
+  cancelled: "bg-red-100 text-red-600",
+};
+
+// All stats are now live from the database — Order/OrderItem/ProductSize
+// models all exist as of later build steps, so the earlier placeholders
+// have been replaced with real queries.
 export default async function AdminDashboardPage() {
-  const totalProducts = await prisma.product.count();
+  const [totalProducts, orders, lowStockCount, recentOrders] = await Promise.all([
+    prisma.product.count(),
+    prisma.order.findMany({ where: { status: { not: "cancelled" } } }),
+    prisma.productSize.count({ where: { stockQuantity: { lte: LOW_STOCK_THRESHOLD } } }),
+    prisma.order.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      include: { items: true },
+    }),
+  ]);
+
+  const totalSales = orders.reduce((sum, o) => sum + Number(o.total), 0);
+  const totalOrders = orders.length;
 
   const stats = [
-    { label: "Total Sales", value: "PKR 0", hint: "Awaiting Order model" },
-    { label: "Total Orders", value: "0", hint: "Awaiting Order model" },
+    { label: "Total Sales", value: `PKR ${totalSales.toLocaleString()}`, hint: "Live from database" },
+    { label: "Total Orders", value: totalOrders.toLocaleString(), hint: "Live from database" },
     { label: "Total Products", value: totalProducts.toLocaleString(), hint: "Live from database" },
-    { label: "Low Stock Alert", value: "0", hint: "Awaiting stock query" },
+    {
+      label: "Low Stock Alert",
+      value: lowStockCount.toLocaleString(),
+      hint: `Sizes with ≤ ${LOW_STOCK_THRESHOLD} units left`,
+    },
   ];
 
   return (
@@ -39,9 +76,37 @@ export default async function AdminDashboardPage() {
           <h2 className="text-sm font-semibold uppercase tracking-wide text-brown/50">
             Recent Atelier Orders
           </h2>
-          <p className="mt-4 text-sm text-brown/40">
-            Order history will appear here once the Order model is built.
-          </p>
+
+          {recentOrders.length === 0 ? (
+            <p className="mt-4 text-sm text-brown/40">No orders yet.</p>
+          ) : (
+            <div className="mt-4 space-y-3">
+              {recentOrders.map((order) => (
+                <Link
+                  key={order.id}
+                  href={`/admin/orders/${order.id}`}
+                  className="flex items-center justify-between rounded-md px-2 py-2 text-sm hover:bg-beige/40"
+                >
+                  <div>
+                    <p className="font-medium text-espresso">#{order.orderNumber}</p>
+                    <p className="text-xs text-brown/40">{order.name}</p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-espresso">
+                      PKR {Number(order.total).toLocaleString()}
+                    </span>
+                    <span
+                      className={`rounded-full px-2 py-1 text-xs font-semibold ${
+                        STATUS_STYLES[order.status] ?? "bg-brown/10 text-brown"
+                      }`}
+                    >
+                      {STATUS_LABELS[order.status] ?? order.status}
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="rounded-lg border border-brown/10 bg-white p-6 shadow-sm">

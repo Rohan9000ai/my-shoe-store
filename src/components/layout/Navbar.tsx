@@ -11,7 +11,6 @@ const NAV_LINKS = [
   { label: "Men's", href: "/products?category=men" },
   { label: "Women's", href: "/products?category=women" },
   { label: "New Arrivals", href: "/products?category=new-arrivals" },
-  { label: "Editorial", href: "/editorial" },
 ];
 
 export default function Navbar() {

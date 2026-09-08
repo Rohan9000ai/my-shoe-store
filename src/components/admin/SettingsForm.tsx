@@ -20,7 +20,7 @@ const DEFAULTS: SettingsValues = {
   tax_rate: "0",
   handling_fee: "0",
   whatsapp_number: "",
-  store_name: "Luxe Sole Atelier Main",
+  store_name: "Luxe Sole Store",
   store_email: "",
 };
 

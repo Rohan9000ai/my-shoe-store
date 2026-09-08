@@ -320,7 +320,7 @@ export default function ProductForm({
         <div className="space-y-6">
           <div>
             <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-espresso">
-              Atelier Assets Preview
+              Upload Images (max 6)
             </label>
             <div className="grid grid-cols-3 gap-2">
               {images.map((img, index) => (
@@ -358,7 +358,7 @@ export default function ProductForm({
 
           <div>
             <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-espresso">
-              Size & Stock Matrix
+              Size & Stock 
             </label>
             <div className="space-y-2">
               {sizes.map((row, index) => (
@@ -377,13 +377,6 @@ export default function ProductForm({
                     value={row.stockQuantity}
                     onChange={(e) => updateSizeRow(index, "stockQuantity", e.target.value)}
                     className="w-20 rounded-md border border-brown/20 px-2 py-2 text-sm"
-                  />
-                  <input
-                    type="text"
-                    placeholder="SKU (optional)"
-                    value={row.sku}
-                    onChange={(e) => updateSizeRow(index, "sku", e.target.value)}
-                    className="flex-1 rounded-md border border-brown/20 px-2 py-2 text-sm"
                   />
                   <button
                     type="button"

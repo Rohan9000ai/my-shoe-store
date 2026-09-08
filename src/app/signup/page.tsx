@@ -81,7 +81,7 @@ export default function SignupPage() {
           </h1>
           <h2 className="mt-4 text-lg font-semibold text-espresso">Create Account</h2>
           <p className="mt-1 text-sm text-brown/70">
-            Join our elite circle of connoisseurs
+            Join our Premium shoes collection
           </p>
         </div>
 
@@ -90,7 +90,7 @@ export default function SignupPage() {
             label="Full Name"
             type="text"
             name="name"
-            placeholder="Alexander Vance"
+            placeholder="Sakhar Ijaz"
             value={formData.name}
             onChange={handleChange("name")}
             error={errors.name}
@@ -101,7 +101,7 @@ export default function SignupPage() {
             label="Email Address"
             type="email"
             name="email"
-            placeholder="alexander@luxury.com"
+            placeholder="example@gmail.com"
             value={formData.email}
             onChange={handleChange("email")}
             error={errors.email}
@@ -134,7 +134,7 @@ export default function SignupPage() {
             label="Confirm Password"
             type="password"
             name="confirmPassword"
-            placeholder="At least 8 characters"
+            placeholder="same as above"
             value={formData.confirmPassword}
             onChange={handleChange("confirmPassword")}
             error={errors.confirmPassword}

@@ -25,6 +25,7 @@ const CITIES = [
   "Multan",
   "Peshawar",
   "Quetta",
+  "Others",
 ];
 
 // Shipping information section of checkout — matches the checkout-page
@@ -36,7 +37,7 @@ export default function AddressForm({ values, errors, onChange }: AddressFormPro
 
       <Input
         label="Full Name"
-        placeholder="e.g. Alexander Vance"
+        placeholder="e.g. Sakhar ijaz"
         value={values.name}
         onChange={(e) => onChange("name", e.target.value)}
         error={errors.name}
@@ -93,7 +94,7 @@ export default function AddressForm({ values, errors, onChange }: AddressFormPro
           value={values.address}
           onChange={(e) => onChange("address", e.target.value)}
           rows={3}
-          placeholder="Street address, apartment, suite, block"
+          placeholder="Street address, apartment, block"
           className={`w-full rounded-md border bg-white px-4 py-3 text-sm text-espresso focus:outline-none focus:ring-2 focus:ring-gold/60 ${
             errors.address ? "border-red-500" : "border-brown/20"
           }`}

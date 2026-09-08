@@ -50,7 +50,7 @@ export default function AdminSidebar() {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-60 flex-col justify-between bg-espresso text-beige transition-transform duration-200 md:static md:z-auto md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-60 flex-col justify-between overflow-y-auto bg-espresso text-beige transition-transform duration-200 md:sticky md:top-0 md:z-auto md:translate-x-0 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -61,7 +61,7 @@ export default function AdminSidebar() {
                 LUXE SOLE
               </h1>
               <p className="mt-1 text-[10px] uppercase tracking-widest text-beige/50">
-                Atelier Control
+                Admin Control
               </p>
             </div>
             <button
@@ -99,7 +99,7 @@ export default function AdminSidebar() {
             onClick={closeMobile}
             className="block px-2 py-2 text-sm text-beige/70 hover:text-gold"
           >
-            ← View Atelier Shop
+            ← View Complete Store
           </Link>
           <button
             onClick={() => signOut({ callbackUrl: "/login" })}

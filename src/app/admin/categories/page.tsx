@@ -126,7 +126,7 @@ export default function AdminCategoriesPage() {
             <p className="mt-4 text-sm text-brown/40">Loading...</p>
           ) : categories.length === 0 ? (
             <p className="mt-4 text-sm text-brown/40">
-              No categories yet — add your first one.
+              No categories yet  —  add your first one.
             </p>
           ) : (
             <ul className="mt-4 divide-y divide-brown/5">
