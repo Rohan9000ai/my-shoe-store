@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import SalesChart from "@/components/admin/SalesChart";
 
 const LOW_STOCK_THRESHOLD = 5;
+const CHART_DAYS = 14;
 
 const STATUS_LABELS: Record<string, string> = {
   pending: "Pending",
@@ -38,6 +40,33 @@ export default async function AdminDashboardPage() {
 
   const totalSales = orders.reduce((sum, o) => sum + Number(o.total), 0);
   const totalOrders = orders.length;
+
+  // Build a daily revenue series for the last CHART_DAYS days, filling
+  // in PKR 0 for any day with no orders so the chart has no gaps.
+  const chartStart = new Date();
+  chartStart.setDate(chartStart.getDate() - (CHART_DAYS - 1));
+  chartStart.setHours(0, 0, 0, 0);
+
+  const dailyTotals = new Map<string, number>();
+  for (let i = 0; i < CHART_DAYS; i++) {
+    const day = new Date(chartStart);
+    day.setDate(chartStart.getDate() + i);
+    dailyTotals.set(day.toDateString(), 0);
+  }
+
+  for (const order of orders) {
+    if (order.createdAt >= chartStart) {
+      const key = order.createdAt.toDateString();
+      if (dailyTotals.has(key)) {
+        dailyTotals.set(key, (dailyTotals.get(key) ?? 0) + Number(order.total));
+      }
+    }
+  }
+
+  const chartData = Array.from(dailyTotals.entries()).map(([dateStr, total]) => ({
+    label: new Date(dateStr).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+    total,
+  }));
 
   const stats = [
     { label: "Total Sales", value: `PKR ${totalSales.toLocaleString()}`, hint: "Live from database" },
@@ -113,9 +142,8 @@ export default async function AdminDashboardPage() {
           <h2 className="text-sm font-semibold uppercase tracking-wide text-brown/50">
             Atelier Performance
           </h2>
-          <p className="mt-4 text-sm text-brown/40">
-            Sales trajectory chart placeholder — wired up in a later step.
-          </p>
+          <p className="mt-1 text-xs text-brown/40">Last {CHART_DAYS} days</p>
+          <SalesChart data={chartData} />
         </div>
       </div>
     </div>

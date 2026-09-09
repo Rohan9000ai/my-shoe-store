@@ -1,19 +1,48 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/hooks/useCart";
 
-// Placeholder values until the admin Settings page (delivery charge,
-// free-delivery threshold) is built and wired to a real API — matches
-// the example values shown in the admin-settings design.
-const DELIVERY_CHARGE = 1500;
-const FREE_DELIVERY_THRESHOLD = 50000;
+interface StoreSettings {
+  deliveryCharge: number;
+  freeDeliveryThreshold: number;
+  taxRate: number;
+}
 
+const DEFAULT_SETTINGS: StoreSettings = {
+  deliveryCharge: 1500,
+  freeDeliveryThreshold: 50000,
+  taxRate: 0,
+};
+
+// Pulls delivery charge, free-delivery threshold, and tax rate from the
+// real /api/settings endpoint — same source checkout's OrderSummary
+// reads from, instead of hardcoded constants.
 export default function CartSummary() {
   const { subtotal, itemCount } = useCart();
+  const [settings, setSettings] = useState<StoreSettings>(DEFAULT_SETTINGS);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/settings")
+      .then((res) => res.json())
+      .then((data) => {
+        setSettings({
+          deliveryCharge: data.deliveryCharge ?? DEFAULT_SETTINGS.deliveryCharge,
+          freeDeliveryThreshold:
+            data.freeDeliveryThreshold ?? DEFAULT_SETTINGS.freeDeliveryThreshold,
+          taxRate: data.taxRate ?? DEFAULT_SETTINGS.taxRate,
+        });
+      })
+      .catch(() => setSettings(DEFAULT_SETTINGS))
+      .finally(() => setIsLoading(false));
+  }, []);
+
   const deliveryCharge =
-    subtotal === 0 || subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_CHARGE;
-  const total = subtotal + deliveryCharge;
+    subtotal === 0 || subtotal >= settings.freeDeliveryThreshold ? 0 : settings.deliveryCharge;
+  const tax = Math.round((subtotal * settings.taxRate) / 100);
+  const total = subtotal + deliveryCharge + tax;
 
   return (
     <div className="rounded-lg border border-brown/10 bg-white p-6 shadow-sm">
@@ -40,10 +69,20 @@ export default function CartSummary() {
           </span>
           <span>PKR {subtotal.toLocaleString()}</span>
         </div>
+        {settings.taxRate > 0 && (
+          <div className="flex justify-between text-brown/70">
+            <span>Tax ({settings.taxRate}%)</span>
+            <span>PKR {tax.toLocaleString()}</span>
+          </div>
+        )}
         <div className="flex justify-between text-brown/70">
           <span>Delivery Charges</span>
           <span className={deliveryCharge === 0 ? "text-green-600" : ""}>
-            {deliveryCharge === 0 ? "Free" : `PKR ${deliveryCharge.toLocaleString()}`}
+            {isLoading
+              ? "…"
+              : deliveryCharge === 0
+                ? "Free"
+                : `PKR ${deliveryCharge.toLocaleString()}`}
           </span>
         </div>
       </div>

@@ -70,7 +70,16 @@ export async function createOrder(input: CreateOrderInput) {
 
   const order = await prisma.$transaction(async (tx) => {
     let subtotal = 0;
-    const orderItemsData: Prisma.OrderItemCreateWithoutOrderInput[] = [];
+    // ✅ FIX: Use explicit type with proper typing
+    const orderItemsData: {
+      productId: string;
+      productName: string;
+      size: string;
+      unitPrice: number;
+      discount: number;
+      quantity: number;
+      lineTotal: number;
+    }[] = [];
 
     for (const item of items) {
       const product = await tx.product.findUnique({ where: { id: item.productId } });
@@ -127,7 +136,9 @@ export async function createOrder(input: CreateOrderInput) {
         country: shipping.country,
         city: shipping.city,
         address: shipping.address,
-        items: { create: orderItemsData },
+        items: {
+          create: orderItemsData,
+        },
       },
       include: { items: true },
     });
