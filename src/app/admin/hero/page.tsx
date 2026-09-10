@@ -142,13 +142,6 @@ export default function AdminHeroPage() {
         <h1 className="font-heading text-2xl font-bold text-espresso">
           Hero Section Management
         </h1>
-        <button
-          onClick={handleAddSlide}
-          className="flex items-center gap-2 rounded-lg bg-gold px-4 py-2 text-sm font-semibold text-espresso hover:bg-gold/90 transition-colors"
-        >
-          <PlusIcon className="w-4 h-4" />
-          Add Slide
-        </button>
       </div>
 
       {/* ✅ Default Slides Note - Fixed position */}
@@ -164,56 +157,6 @@ export default function AdminHeroPage() {
           {error}
         </div>
       )}
-
-      {/* Background Settings */}
-      <div className="mb-6 rounded-lg border border-brown/20 bg-white p-6 shadow-sm">
-        <h2 className="text-sm font-bold uppercase tracking-wide text-espresso mb-4">
-          Background Image
-        </h2>
-        <div className="flex items-center gap-4">
-          {settings.backgroundImage && (
-            <div className="relative w-32 h-20 rounded-lg overflow-hidden border border-brown/20">
-              <Image
-                src={settings.backgroundImage}
-                alt="Hero background"
-                fill
-                className="object-cover"
-              />
-            </div>
-          )}
-          <div className="flex-1">
-            <input
-              type="text"
-              placeholder="Enter background image URL"
-              value={settings.backgroundImage || ""}
-              onChange={(e) => {
-                setSettings({ backgroundImage: e.target.value });
-              }}
-              className="w-full rounded-lg border-2 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gold/50"
-            />
-            <button
-              onClick={async () => {
-                try {
-                  const response = await fetch("/api/hero/settings", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ backgroundImage: settings.backgroundImage }),
-                  });
-                  if (response.ok) {
-                    await fetchData();
-                    router.refresh();
-                  }
-                } catch (error) {
-                  alert("Failed to update background");
-                }
-              }}
-              className="mt-2 px-4 py-2 bg-gold text-espresso rounded-lg text-sm font-semibold hover:bg-gold/90 transition-colors"
-            >
-              Update Background
-            </button>
-          </div>
-        </div>
-      </div>
 
       {/* Slides List */}
       <div className="rounded-lg border border-brown/20 bg-white shadow-sm overflow-hidden">

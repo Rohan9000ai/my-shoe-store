@@ -35,7 +35,10 @@ export default function SidePanel({
     if (isOpen) {
       const fetchCategories = async () => {
         try {
-          const response = await fetch("/api/categories/all");
+          // ✅ Add cache: 'no-store' to always get fresh data
+          const response = await fetch("/api/categories/all", {
+            cache: 'no-store',
+          });
           if (response.ok) {
             const data = await response.json();
             setCategories(data.categories || []);

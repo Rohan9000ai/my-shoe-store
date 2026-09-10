@@ -144,6 +144,7 @@ export default function HeroCarousel() {
             priority
             sizes="100vw"
             quality={80}
+            unoptimized={true}
           />
           <div className="absolute inset-0 bg-black/40" />
         </div>

@@ -6,7 +6,10 @@ export async function GET() {
     const categories = await getRecentCategories(4);
     return NextResponse.json({ categories }, {
       headers: {
-        'Cache-Control': 'public, max-age=60, stale-while-revalidate=300',
+        // ✅ Disable caching - always fresh data
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
       },
     });
   } catch (error) {

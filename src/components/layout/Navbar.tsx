@@ -23,7 +23,10 @@ export default function Navbar() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("/api/categories/recent");
+        // ✅ Add cache: 'no-store' to always get fresh data
+        const response = await fetch("/api/categories/recent", {
+          cache: 'no-store',
+        });
         if (response.ok) {
           const data = await response.json();
           setCategories(data.categories || []);
@@ -64,7 +67,6 @@ export default function Navbar() {
 
             {/* Desktop nav links - Home + Dynamic Categories */}
             <nav className="hidden md:flex items-center gap-6">
-              {/* ✅ Home link added */}
               <Link
                 href="/"
                 className="text-sm font-medium text-brown hover:text-gold transition-colors"
@@ -90,21 +92,6 @@ export default function Navbar() {
 
             {/* Right: icons + auth */}
             <div className="flex items-center gap-1 sm:gap-2">
-              {/* Search */}
-              <button 
-                aria-label="Search" 
-                className="hidden sm:block p-2 text-brown hover:text-gold transition-colors"
-              >
-                <MagnifyingGlassIcon className="w-5 h-5" />
-              </button>
-
-              {/* Wishlist */}
-              <button 
-                aria-label="Wishlist" 
-                className="p-2 text-brown hover:text-gold transition-colors"
-              >
-                <HeartIcon className="w-5 h-5" />
-              </button>
 
               {/* Cart Button */}
               <CartButton />
@@ -117,7 +104,7 @@ export default function Navbar() {
                       href="/admin"
                       className="text-xs font-medium text-brown hover:text-gold transition-colors px-3 py-1.5 border border-brown/20 rounded hover:border-gold/50"
                     >
-                      Admin
+                      Admin Dashboard
                     </Link>
                   )}
                   <button

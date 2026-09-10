@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { InstagramIcon, FacebookIcon, TikTokIcon } from "@/components/icons/SocialIcons";
 
 interface Category {
   id: string;
@@ -26,7 +27,10 @@ export default function Footer() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("/api/categories/all");
+        // ✅ Add cache: 'no-store' to always get fresh data
+        const response = await fetch("/api/categories/all", {
+          cache: 'no-store',
+        });
         if (response.ok) {
           const data = await response.json();
           setCategories(data.categories || []);
@@ -44,7 +48,7 @@ export default function Footer() {
   return (
     <footer className="bg-espresso text-beige">
       <div className="mx-auto max-w-7xl px-4 py-12">
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_2fr]">
           {/* Brand */}
           <div>
             <h3 className="font-heading text-lg font-bold text-gold">LUXE SOLE</h3>
@@ -55,33 +59,16 @@ export default function Footer() {
             </p>
             <div className="mt-4 flex gap-4 text-beige/70">
               <a href="https://instagram.com" aria-label="Instagram" target="_blank" rel="noreferrer" className="hover:text-gold transition-colors">
-                IG
+                <InstagramIcon className="w-5 h-5" />
               </a>
               <a href="https://facebook.com" aria-label="Facebook" target="_blank" rel="noreferrer" className="hover:text-gold transition-colors">
-                FB
+                <FacebookIcon className="w-5 h-5" />
               </a>
-              <a href="https://twitter.com" aria-label="Twitter" target="_blank" rel="noreferrer" className="hover:text-gold transition-colors">
-                TW
+              <a href="https://tiktok.com" aria-label="TikTok" target="_blank" rel="noreferrer" className="hover:text-gold transition-colors">
+                <TikTokIcon className="w-5 h-5" />
               </a>
             </div>
           </div>
-
-          {/* Quick Links */}
-          <div>
-            <h4 className="text-sm font-semibold uppercase tracking-wide text-gold">
-              Quick Links
-            </h4>
-            <ul className="mt-3 space-y-2 text-sm text-beige/70">
-              {QUICK_LINKS.map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href} className="hover:text-gold transition-colors">
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
           {/* Categories - Dynamic */}
           <div>
             <h4 className="text-sm font-semibold uppercase tracking-wide text-gold">
@@ -115,7 +102,6 @@ export default function Footer() {
               Contact Info
             </h4>
             <ul className="mt-3 space-y-2 text-sm text-beige/70">
-              <li>120 Heritage Way, Milan, Italy</li>
               <li>concierge@luxesole.com</li>
               {whatsappNumber && <li>{whatsappNumber}</li>}
             </ul>

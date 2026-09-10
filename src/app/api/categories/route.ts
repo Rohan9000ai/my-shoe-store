@@ -10,10 +10,12 @@ export async function GET() {
   try {
     const categories = await listCategories();
     
-    // ✅ ADD CACHING HEADERS
+    // ✅ Disable caching - always fresh data
     return NextResponse.json({ categories }, {
       headers: {
-        'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
       },
     });
   } catch (error) {

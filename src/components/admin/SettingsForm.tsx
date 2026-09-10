@@ -139,7 +139,7 @@ export default function SettingsForm() {
         </div>
 
         <div className="rounded-lg border border-brown/10 bg-white p-6 shadow-sm">
-          <h2 className="font-heading text-lg font-bold text-espresso">Tax &amp; Levies Settings</h2>
+          <h2 className="font-heading text-lg font-bold text-espresso">Tax &amp; Settings</h2>
           <div className="mt-4 space-y-4">
             <Input
               label="Sales Tax Rate (%)"
@@ -150,7 +150,7 @@ export default function SettingsForm() {
               onChange={(e) => handleChange("tax_rate", e.target.value)}
             />
             <Input
-              label="Custom Atelier Handling Fee (PKR)"
+              label="Custom Handling Fee (PKR)"
               type="number"
               min="0"
               value={values.handling_fee}
@@ -178,7 +178,7 @@ export default function SettingsForm() {
 
         <div className="rounded-lg border border-brown/10 bg-white p-6 shadow-sm">
           <h2 className="font-heading text-lg font-bold text-espresso">
-            Atelier Corporate Address
+             Address Information
           </h2>
           <div className="mt-4 space-y-4">
             <Input
@@ -187,7 +187,7 @@ export default function SettingsForm() {
               onChange={(e) => handleChange("store_name", e.target.value)}
             />
             <Input
-              label="Atelier Email Address"
+              label="Customer Support Email Address"
               type="email"
               value={values.store_email}
               onChange={(e) => handleChange("store_email", e.target.value)}

@@ -107,7 +107,7 @@ export default async function AdminDashboardPage() {
       <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="rounded-lg border border-brown/10 bg-white p-6 shadow-sm lg:col-span-2">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-brown/50">
-            Recent Atelier Orders
+            Recent Orders
           </h2>
 
           {recentOrders.length === 0 ? (
@@ -144,7 +144,7 @@ export default async function AdminDashboardPage() {
 
         <div className="rounded-lg border border-brown/10 bg-white p-6 shadow-sm">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-brown/50">
-            Atelier Performance
+            Sales Performance
           </h2>
           <p className="mt-1 text-xs text-brown/40">Last {CHART_DAYS} days</p>
           <SalesChart data={chartData} />
