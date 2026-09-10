@@ -12,6 +12,30 @@ function slugify(value: string) {
 export async function listCategories() {
   return prisma.category.findMany({ orderBy: { name: "asc" } });
 }
+// ✅ NEW: Get recent categories (for navbar)
+export async function getRecentCategories(limit: number = 4) {
+  return prisma.category.findMany({
+    orderBy: { createdAt: "desc" },
+    take: limit,
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+    },
+  });
+}
+
+// ✅ NEW: Get all categories (for sidepanel and footer)
+export async function getAllCategories() {
+  return prisma.category.findMany({
+    orderBy: { name: "asc" },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+    },
+  });
+}
 
 export async function createCategory(data: CategoryInput) {
   const slug = data.slug?.trim() ? slugify(data.slug) : slugify(data.name);

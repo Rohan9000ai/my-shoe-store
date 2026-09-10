@@ -1,94 +1,141 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
+import { Bars3Icon, MagnifyingGlassIcon, HeartIcon } from "@heroicons/react/24/outline";
 import SidePanel from "@/components/layout/SidePanel";
 import CartButton from "@/components/layout/CartButton";
 
-const NAV_LINKS = [
-  { label: "Home", href: "/" },
-  { label: "Men's", href: "/products?category=men" },
-  { label: "Women's", href: "/products?category=women" },
-  { label: "New Arrivals", href: "/products?category=new-arrivals" },
-];
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+}
 
 export default function Navbar() {
   const { data: session, status } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch recent categories (4 most recent)
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("/api/categories/recent");
+        if (response.ok) {
+          const data = await response.json();
+          setCategories(data.categories || []);
+        }
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-brown/10 bg-beige/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
-          {/* Left: hamburger */}
-          <button
-            type="button"
-            aria-label="Open menu"
-            onClick={() => setMenuOpen(true)}
-            className="flex flex-col gap-1.5 p-2"
-          >
-            <span className="block h-0.5 w-6 bg-espresso" />
-            <span className="block h-0.5 w-6 bg-espresso" />
-            <span className="block h-0.5 w-6 bg-espresso" />
-          </button>
-
-          {/* Center: logo */}
-          <Link
-            href="/"
-            className="font-heading text-xl font-bold tracking-wide text-gold"
-          >
-            LUXE SOLE
-          </Link>
-
-          {/* Desktop nav links */}
-          <nav className="hidden items-center gap-6 md:flex">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-sm font-medium text-espresso hover:text-gold"
+      <header className="sticky top-0 z-40 border-b border-brown/10 bg-beige/95 backdrop-blur-sm">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            {/* Left: hamburger + logo */}
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                aria-label="Open menu"
+                onClick={() => setMenuOpen(true)}
+                className="p-2 hover:text-gold transition-colors"
               >
-                {link.label}
+                <Bars3Icon className="w-6 h-6" />
+              </button>
+
+              <Link
+                href="/"
+                className="font-heading text-xl sm:text-2xl font-bold tracking-wide text-espresso hover:text-gold transition-colors"
+              >
+                LUXE SOLE
               </Link>
-            ))}
-          </nav>
+            </div>
 
-          {/* Right: search, wishlist, cart, auth */}
-          <div className="flex items-center gap-3 sm:gap-4">
-            <button aria-label="Search" className="text-espresso hover:text-gold">
-              🔍
-            </button>
-            <button aria-label="Wishlist" className="text-espresso hover:text-gold">
-              ♡
-            </button>
-            <CartButton />
-
-            {status === "authenticated" ? (
-              <div className="hidden items-center gap-3 md:flex">
-                {session.user?.role === "admin" && (
-                  <Link
-                    href="/admin"
-                    className="rounded-md bg-brown px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-beige hover:bg-espresso"
-                  >
-                    Admin Dashboard
-                  </Link>
-                )}
-                <button
-                  onClick={() => signOut({ callbackUrl: "/" })}
-                  className="text-sm font-medium text-espresso hover:text-gold"
+            {/* Desktop nav links - Home + Dynamic Categories */}
+            <nav className="hidden md:flex items-center gap-6">
+              {/* ✅ Home link added */}
+              <Link
+                href="/"
+                className="text-sm font-medium text-brown hover:text-gold transition-colors"
+              >
+                Home
+              </Link>
+              <Link
+                href="/products"
+                className="text-sm font-medium text-brown hover:text-gold transition-colors"
+              >
+                All Products
+              </Link>
+              {!loading && categories.map((category) => (
+                <Link
+                  key={category.id}
+                  href={`/products?category=${category.slug}`}
+                  className="text-sm font-medium text-brown hover:text-gold transition-colors"
                 >
-                  {session.user?.name?.split(" ")[0] ?? "Account"} · Log Out
-                </button>
-              </div>
-            ) : (
-              <Link
-                href="/login"
-                className="hidden text-sm font-medium text-espresso hover:text-gold md:block"
+                  {category.name}
+                </Link>
+              ))}
+            </nav>
+
+            {/* Right: icons + auth */}
+            <div className="flex items-center gap-1 sm:gap-2">
+              {/* Search */}
+              <button 
+                aria-label="Search" 
+                className="hidden sm:block p-2 text-brown hover:text-gold transition-colors"
               >
-                Login
-              </Link>
-            )}
+                <MagnifyingGlassIcon className="w-5 h-5" />
+              </button>
+
+              {/* Wishlist */}
+              <button 
+                aria-label="Wishlist" 
+                className="p-2 text-brown hover:text-gold transition-colors"
+              >
+                <HeartIcon className="w-5 h-5" />
+              </button>
+
+              {/* Cart Button */}
+              <CartButton />
+
+              {/* Auth & Admin */}
+              {status === "authenticated" ? (
+                <div className="hidden md:flex items-center gap-3">
+                  {session.user?.role === "admin" && (
+                    <Link
+                      href="/admin"
+                      className="text-xs font-medium text-brown hover:text-gold transition-colors px-3 py-1.5 border border-brown/20 rounded hover:border-gold/50"
+                    >
+                      Admin
+                    </Link>
+                  )}
+                  <button
+                    onClick={() => signOut({ callbackUrl: "/" })}
+                    className="text-sm font-medium text-brown hover:text-gold transition-colors"
+                  >
+                    {session.user?.name?.split(" ")[0] ?? "Account"} · Log Out
+                  </button>
+                </div>
+              ) : (
+                <Link
+                  href="/login"
+                  className="hidden md:block text-sm font-medium text-brown hover:text-gold transition-colors"
+                >
+                  Login
+                </Link>
+              )}
+            </div>
           </div>
         </div>
       </header>

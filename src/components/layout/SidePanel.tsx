@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { signOut } from "next-auth/react";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+import { useState, useEffect } from "react";
 
-const MENU_LINKS = [
-  { label: "Men's", href: "/products?category=men" },
-  { label: "Women's", href: "/products?category=women" },
-  { label: "Kids", href: "/products?category=kids" },
-  { label: "New Arrivals", href: "/products?category=new-arrivals" },
-  { label: "Sale", href: "/products?category=sale", badge: "SALE" },
-];
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+}
 
 interface SidePanelProps {
   isOpen: boolean;
@@ -27,12 +27,38 @@ export default function SidePanel({
   isAuthenticated,
   isAdmin,
 }: SidePanelProps) {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch all categories when panel opens
+  useEffect(() => {
+    if (isOpen) {
+      const fetchCategories = async () => {
+        try {
+          const response = await fetch("/api/categories/all");
+          if (response.ok) {
+            const data = await response.json();
+            setCategories(data.categories || []);
+          }
+        } catch (error) {
+          console.error("Error fetching categories:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchCategories();
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex">
-      <div className="flex w-72 flex-col bg-espresso p-6 text-beige">
-        <div className="mb-8 flex items-center justify-between">
+      {/* Side panel - Full height with flex column */}
+      <div className="flex flex-col w-72 h-full bg-espresso text-beige shadow-xl overflow-y-auto">
+        {/* Header - Fixed at top */}
+        <div className="flex items-center justify-between p-4 border-b border-beige/10 flex-shrink-0">
           <span className="font-heading text-lg font-bold text-gold">
             LUXE SOLE
           </span>
@@ -40,66 +66,75 @@ export default function SidePanel({
             type="button"
             aria-label="Close menu"
             onClick={onClose}
-            className="text-2xl leading-none text-beige"
+            className="p-2 text-beige hover:text-gold transition-colors"
           >
-            &times;
+            <XMarkIcon className="w-6 h-6" />
           </button>
         </div>
 
-        <nav className="flex flex-col gap-4">
-          {MENU_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={onClose}
-              className="flex items-center gap-2 text-sm font-medium hover:text-gold"
-            >
-              {link.label}
-              {link.badge && (
-                <span className="rounded bg-gold px-1.5 py-0.5 text-[10px] font-bold text-espresso">
-                  {link.badge}
-                </span>
-              )}
-            </Link>
-          ))}
+        {/* Navigation - Scrollable middle section with ALL categories */}
+        <nav className="flex-1 overflow-y-auto p-4 space-y-1">
+          <Link
+            href="/products"
+            onClick={onClose}
+            className="block px-4 py-2.5 text-sm font-medium text-beige/80 hover:text-gold hover:bg-beige/10 rounded-lg transition-colors"
+          >
+            All Products
+          </Link>
+          
+          {loading ? (
+            <div className="px-4 py-2 text-sm text-beige/40">Loading categories...</div>
+          ) : (
+            categories.map((category) => (
+              <Link
+                key={category.id}
+                href={`/products?category=${category.slug}`}
+                onClick={onClose}
+                className="block px-4 py-2.5 text-sm font-medium text-beige/80 hover:text-gold hover:bg-beige/10 rounded-lg transition-colors"
+              >
+                {category.name}
+              </Link>
+            ))
+          )}
         </nav>
 
-        <div className="mt-auto flex flex-col gap-3 pt-8">
+        {/* Footer - Sticks to bottom */}
+        <div className="border-t border-beige/10 p-4 flex-shrink-0">
           {isAuthenticated ? (
-            <>
+            <div className="space-y-2">
               {isAdmin && (
                 <Link
                   href="/admin"
                   onClick={onClose}
-                  className="rounded-md bg-gold py-3 text-center text-sm font-semibold uppercase tracking-wide text-espresso"
+                  className="block w-full text-center rounded-lg bg-gold py-2.5 text-sm font-semibold uppercase tracking-wide text-espresso hover:bg-gold/90 transition-colors"
                 >
                   Admin Dashboard
                 </Link>
               )}
               <button
                 onClick={() => signOut({ callbackUrl: "/" })}
-                className="rounded-md border border-beige/30 py-3 text-sm font-semibold uppercase tracking-wide"
+                className="block w-full text-center rounded-lg border border-beige/30 py-2.5 text-sm font-semibold uppercase tracking-wide text-beige hover:bg-beige/10 transition-colors"
               >
                 Log Out
               </button>
-            </>
+            </div>
           ) : (
-            <>
+            <div className="space-y-2">
               <Link
                 href="/login"
                 onClick={onClose}
-                className="rounded-md bg-gold py-3 text-center text-sm font-semibold uppercase tracking-wide text-espresso"
+                className="block w-full text-center rounded-lg bg-gold py-2.5 text-sm font-semibold uppercase tracking-wide text-espresso hover:bg-gold/90 transition-colors"
               >
                 Login
               </Link>
               <Link
                 href="/signup"
                 onClick={onClose}
-                className="rounded-md border border-beige/30 py-3 text-center text-sm font-semibold uppercase tracking-wide"
+                className="block w-full text-center rounded-lg border border-beige/30 py-2.5 text-sm font-semibold uppercase tracking-wide text-beige hover:bg-beige/10 transition-colors"
               >
                 Sign Up
               </Link>
-            </>
+            </div>
           )}
         </div>
       </div>
@@ -109,7 +144,7 @@ export default function SidePanel({
         type="button"
         aria-label="Close menu overlay"
         onClick={onClose}
-        className="flex-1 bg-black/40"
+        className="flex-1 bg-black/40 backdrop-blur-sm hover:bg-black/50 transition-colors"
       />
     </div>
   );

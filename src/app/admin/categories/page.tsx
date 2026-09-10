@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 
@@ -11,6 +12,7 @@ interface Category {
 }
 
 export default function AdminCategoriesPage() {
+  const router = useRouter();
   const [categories, setCategories] = useState<Category[]>([]);
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -21,7 +23,8 @@ export default function AdminCategoriesPage() {
   const loadCategories = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch("/api/categories");
+      // ✅ Add cache-busting timestamp
+      const res = await fetch(`/api/categories?t=${Date.now()}`);
       const data = await res.json();
       setCategories(data.categories ?? []);
     } catch {
@@ -61,6 +64,8 @@ export default function AdminCategoriesPage() {
 
       setName("");
       await loadCategories();
+      // ✅ Refresh the page to update navbar, sidepanel, footer
+      router.refresh();
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
@@ -86,6 +91,8 @@ export default function AdminCategoriesPage() {
       }
 
       setCategories((prev) => prev.filter((c) => c.id !== id));
+      // ✅ Refresh the page to update navbar, sidepanel, footer
+      router.refresh();
     } catch {
       setError("Could not delete category.");
     } finally {
@@ -100,9 +107,9 @@ export default function AdminCategoriesPage() {
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
         <form
           onSubmit={handleSubmit}
-          className="space-y-4 rounded-lg border border-brown/10 bg-white p-6 shadow-sm"
+          className="space-y-4 rounded-lg border border-brown/20 bg-white p-6 shadow-sm"
         >
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-brown/50">
+          <h2 className="text-sm font-bold uppercase tracking-wide text-espresso">
             Add New Category
           </h2>
           <Input
@@ -111,35 +118,35 @@ export default function AdminCategoriesPage() {
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
-          {error && <p className="text-sm text-red-500">{error}</p>}
+          {error && <p className="text-sm text-red-600">{error}</p>}
           <Button type="submit" isLoading={isSubmitting}>
             Add Category
           </Button>
         </form>
 
-        <div className="rounded-lg border border-brown/10 bg-white p-6 shadow-sm lg:col-span-2">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-brown/50">
+        <div className="rounded-lg border border-brown/20 bg-white p-6 shadow-sm lg:col-span-2">
+          <h2 className="text-sm font-bold uppercase tracking-wide text-espresso">
             All Categories
           </h2>
 
           {isLoading ? (
-            <p className="mt-4 text-sm text-brown/40">Loading...</p>
+            <p className="mt-4 text-sm text-espresso/40">Loading...</p>
           ) : categories.length === 0 ? (
-            <p className="mt-4 text-sm text-brown/40">
-              No categories yet  —  add your first one.
+            <p className="mt-4 text-sm text-espresso/40">
+              No categories yet — add your first one.
             </p>
           ) : (
-            <ul className="mt-4 divide-y divide-brown/5">
+            <ul className="mt-4 divide-y divide-brown/10">
               {categories.map((cat) => (
                 <li key={cat.id} className="flex items-center justify-between py-3">
                   <div>
                     <p className="text-sm font-medium text-espresso">{cat.name}</p>
-                    <p className="text-xs text-brown/40">/{cat.slug}</p>
+                    <p className="text-xs text-espresso/40">/{cat.slug}</p>
                   </div>
                   <button
                     onClick={() => handleDelete(cat.id)}
                     disabled={deletingId === cat.id}
-                    className="text-sm text-red-500 hover:text-red-700 disabled:opacity-50"
+                    className="text-sm text-red-500 hover:text-red-700 disabled:opacity-50 transition-colors"
                   >
                     {deletingId === cat.id ? "Deleting..." : "Delete"}
                   </button>

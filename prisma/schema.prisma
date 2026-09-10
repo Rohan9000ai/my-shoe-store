@@ -174,3 +174,29 @@ model Settings {
 
   @@map("settings")
 }
+
+// Hero Section Models - Add this at the end of your schema.prisma
+
+model HeroSlide {
+  id          String   @id @default(uuid())
+  title       String   @db.VarChar(255)
+  description String   @db.Text
+  ctaLabel    String   @default("Shop Now") @db.VarChar(50)
+  ctaHref     String   @default("/products") @db.VarChar(255)
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([order])
+  @@index([isActive])
+  @@map("hero_slides")
+}
+
+model HeroSettings {
+  id              String   @id @default(uuid())
+  backgroundImage String?  @map("background_image") @db.Text
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@map("hero_settings")
+}

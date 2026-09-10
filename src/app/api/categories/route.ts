@@ -9,7 +9,13 @@ import { listCategories, createCategory, deleteCategory } from "@/services/categ
 export async function GET() {
   try {
     const categories = await listCategories();
-    return NextResponse.json({ categories });
+    
+    // ✅ ADD CACHING HEADERS
+    return NextResponse.json({ categories }, {
+      headers: {
+        'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
+      },
+    });
   } catch (error) {
     console.error("List categories error:", error);
     return NextResponse.json(

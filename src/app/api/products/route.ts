@@ -3,11 +3,42 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { productSchema, productQuerySchema } from "@/lib/validations";
 import { listProducts, createProduct } from "@/services/product.service";
+import { prisma } from "@/lib/prisma";
 
 // Public: list products with optional filters (category, search, price
 // range) and pagination. Defaults to available-only products.
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
+  
+  // ✅ Check if this is a request for all products (admin)
+  const all = searchParams.get("all") === "true";
+  
+  // For admin, get all products without filters
+  if (all) {
+    try {
+      const products = await prisma.product.findMany({
+        orderBy: { createdAt: "desc" },
+        include: {
+          images: { orderBy: { position: "asc" }, take: 1 },
+          sizes: true,
+        },
+      });
+      
+      return NextResponse.json({ products }, {
+        headers: {
+          'Cache-Control': 'public, max-age=60, stale-while-revalidate=300',
+        },
+      });
+    } catch (error) {
+      console.error("List all products error:", error);
+      return NextResponse.json(
+        { message: "Something went wrong. Please try again." },
+        { status: 500 }
+      );
+    }
+  }
+
+  // Regular public request with filters
   const queryResult = productQuerySchema.safeParse(Object.fromEntries(searchParams));
 
   if (!queryResult.success) {
@@ -19,7 +50,12 @@ export async function GET(request: Request) {
 
   try {
     const result = await listProducts(queryResult.data);
-    return NextResponse.json(result);
+    
+    return NextResponse.json(result, {
+      headers: {
+        'Cache-Control': 'public, max-age=60, stale-while-revalidate=300',
+      },
+    });
   } catch (error) {
     console.error("List products error:", error);
     return NextResponse.json(

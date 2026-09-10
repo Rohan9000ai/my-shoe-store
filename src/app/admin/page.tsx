@@ -2,6 +2,10 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import SalesChart from "@/components/admin/SalesChart";
 
+// ✅ Prevent static generation - database connection needed at runtime
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 const LOW_STOCK_THRESHOLD = 5;
 const CHART_DAYS = 14;
 
