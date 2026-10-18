@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import HeroCarousel from "@/components/product/HeroCarousel";
+import StickyCartButton from "@/components/layout/StickyCartButton";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
@@ -48,6 +49,9 @@ export default function HomePage() {
       
       {/* WhatsApp loads lazily */}
       <WhatsAppBubble />
+
+      {/* Floating cart button + "Open cart to checkout" hint */}
+      <StickyCartButton showHint />
     </>
   );
 }

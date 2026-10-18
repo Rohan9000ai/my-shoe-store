@@ -25,3 +25,27 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+/* --- Sticky cart button animations --- */
+@keyframes cart-shake {
+  0%, 12%, 100% { transform: translateX(0) rotate(0); }
+  2%  { transform: translateX(-3px) rotate(-8deg); }
+  4%  { transform: translateX(3px) rotate(8deg); }
+  6%  { transform: translateX(-3px) rotate(-8deg); }
+  8%  { transform: translateX(3px) rotate(8deg); }
+  10% { transform: translateX(0) rotate(0); }
+}
+
+@keyframes hint-nudge {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(6px); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .animate-cart-shake {
+    animation: cart-shake 4s ease-in-out infinite;
+  }
+  .animate-hint-nudge {
+    animation: hint-nudge 1.4s ease-in-out infinite;
+  }
+}

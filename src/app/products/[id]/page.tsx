@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import WhatsAppBubble from "@/components/layout/WhatsAppBubble";
+import StickyCartButton from "@/components/layout/StickyCartButton";
 import ProductImageMagnifier from "@/components/product/ProductImageMagnifier";
 import AddToCartForm from "@/components/product/AddToCartForm";
 import { getProductById } from "@/services/product.service";
@@ -117,8 +118,11 @@ export default async function ProductDetailPage({
         </div>
       </main>
 
-      <Footer />
-      <WhatsAppBubble />
+            <div className="bg-espresso pb-20">
+        <Footer />
+      </div>
+      <StickyCartButton raised />
+      <WhatsAppBubble raised />
     </>
   );
 }

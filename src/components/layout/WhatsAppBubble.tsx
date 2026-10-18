@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 // Reads the WhatsApp number from live admin settings (falls back to the
 // .env value until an admin saves one via /admin/settings), so changes
 // made in the admin panel actually take effect on the storefront.
-export default function WhatsAppBubble() {
+export default function WhatsAppBubble({ raised = false }: { raised?: boolean }) { 
   const [whatsappNumber, setWhatsappNumber] = useState(
     process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? ""
   );
@@ -33,7 +33,9 @@ export default function WhatsAppBubble() {
       target="_blank"
       rel="noreferrer"
       aria-label="Chat with us on WhatsApp"
-      className="fixed bottom-6 right-6 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-green-500 shadow-lg hover:bg-green-600"
+            className={`fixed right-6 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-green-500 shadow-lg hover:bg-green-600 ${
+        raised ? "bottom-24" : "bottom-6"
+      }`}
     >
       <svg
         viewBox="0 0 32 32"

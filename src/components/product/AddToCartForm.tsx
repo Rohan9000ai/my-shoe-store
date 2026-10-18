@@ -19,9 +19,9 @@ interface AddToCartFormProps {
   sizes: SizeOption[];
 }
 
-// Size selector + quantity stepper + Add to Cart button. Split out from
-// the product detail page (a server component) since this needs client
-// interactivity to read/write CartContext.
+// Size selector + quantity stepper inline on the page, with the Add to
+// Cart button living in a sticky bar fixed to the bottom of the screen
+// so it's always reachable while scrolling the product.
 export default function AddToCartForm({
   productId,
   name,
@@ -36,50 +36,75 @@ export default function AddToCartForm({
   const [added, setAdded] = useState(false);
 
   const selectedStock = sizes.find((s) => s.size === selectedSize)?.stockQuantity ?? 0;
+  const finalPrice = price - discount;
+
+  const handleSelectSize = (size: string) => {
+    setSelectedSize(size);
+    const stock = sizes.find((s) => s.size === size)?.stockQuantity ?? 1;
+    setQuantity((q) => Math.max(1, Math.min(q, stock)));
+  };
 
   const handleAddToCart = () => {
     if (!selectedSize) return;
-      addItem(
+    addItem(
       { productId, name, price, discount, size: selectedSize, imageUrl, maxStock: selectedStock },
-      quantity);
+      quantity
+    );
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
 
   return (
-    <div className="space-y-4">
-      <SizeSelector sizes={sizes} selectedSize={selectedSize} onSelect={setSelectedSize} />
+    <>
+      <div className="space-y-4">
+        <SizeSelector sizes={sizes} selectedSize={selectedSize} onSelect={handleSelectSize} />
 
-      <div className="flex items-center gap-3">
-        <p className="text-xs font-semibold uppercase tracking-wide text-espresso">Quantity</p>
-        <div className="flex items-center rounded-md border border-brown/20">
-          <button
-            type="button"
-            onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-            className="px-3 py-1 text-brown hover:text-gold"
-            aria-label="Decrease quantity"
-          >
-            −
-          </button>
-          <span className="w-8 text-center text-sm">{quantity}</span>
-          <button
-            type="button"
-            onClick={() => setQuantity((q) => Math.min(selectedStock || 99, q + 1))}
-            className="px-3 py-1 text-brown hover:text-gold"
-            aria-label="Increase quantity"
-          >
-            +
-          </button>
+        <div className="flex items-center gap-3">
+          <p className="text-xs font-semibold uppercase tracking-wide text-espresso">Quantity</p>
+          <div className="flex items-center rounded-md border border-brown/20">
+            <button
+              type="button"
+              onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+              className="px-3 py-1 text-brown hover:text-gold"
+              aria-label="Decrease quantity"
+            >
+              −
+            </button>
+            <span className="w-8 text-center text-sm">{quantity}</span>
+            <button
+              type="button"
+              onClick={() => setQuantity((q) => Math.min(selectedStock || 99, q + 1))}
+              className="px-3 py-1 text-brown hover:text-gold"
+              aria-label="Increase quantity"
+            >
+              +
+            </button>
+          </div>
         </div>
       </div>
 
-      <Button
-        type="button"
-        onClick={handleAddToCart}
-        disabled={!selectedSize || selectedStock === 0}
-      >
-        {added ? "Added to Cart ✓" : "Add to Cart"}
-      </Button>
-    </div>
+      {/* Sticky Add to Cart bar */}
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-brown/10 bg-beige/95 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3">
+          <div className="hidden min-w-0 flex-1 sm:block">
+            <p className="truncate text-sm font-semibold text-espresso">{name}</p>
+            <p className="text-xs text-brown/60">
+              PKR {finalPrice.toLocaleString()}
+              {selectedSize ? ` · Size ${selectedSize}` : " · Select a size"}
+            </p>
+          </div>
+
+          <div className="w-full sm:w-64">
+            <Button
+              type="button"
+              onClick={handleAddToCart}
+              disabled={!selectedSize || selectedStock === 0}
+            >
+              {added ? "Added to Cart ✓" : !selectedSize ? "Select a Size" : "Add to Cart"}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
