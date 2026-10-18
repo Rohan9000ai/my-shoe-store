@@ -10,6 +10,7 @@
 
 # Environment variables (never commit real secrets)
 .env
+.env.backup
 .env.local
 .env.*.local
 
