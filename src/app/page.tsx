@@ -7,7 +7,7 @@ import HeroCarousel from "@/components/product/HeroCarousel";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Luxe Sole — Handcrafted Luxury Footwear",
+  title: "ZTS Collections — Handcrafted Luxury Footwear",
   path: "/",
 });
 

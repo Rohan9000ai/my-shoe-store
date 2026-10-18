@@ -63,7 +63,7 @@ export default function SidePanel({
         {/* Header - Fixed at top */}
         <div className="flex items-center justify-between p-4 border-b border-beige/10 flex-shrink-0">
           <span className="font-heading text-lg font-bold text-gold">
-            LUXE SOLE
+            ZTS Collections
           </span>
           <button
             type="button"

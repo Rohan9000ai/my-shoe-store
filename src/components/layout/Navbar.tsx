@@ -61,7 +61,7 @@ export default function Navbar() {
                 href="/"
                 className="font-heading text-xl sm:text-2xl font-bold tracking-wide text-espresso hover:text-gold transition-colors"
               >
-                LUXE SOLE
+                ZTS Collections
               </Link>
             </div>
 

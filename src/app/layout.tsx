@@ -22,14 +22,14 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Luxe Sole — Luxury Footwear",
+  title: "ZTS Collections — Luxury Footwear",
   description:
     "Handcrafted shoes for the modern connoisseur, tailored from premium selected calfskin and designed in Milan.",
   openGraph: {
-    title: "Luxe Sole — Luxury Footwear",
+    title: "ZTS Collections — Luxury Footwear",
     description: "Handcrafted shoes for the modern connoisseur",
     url: "https://luxesole.com",
-    siteName: "Luxe Sole",
+    siteName: "ZTS Collections",
     images: [
       {
         url: "https://luxesole.com/og-image.jpg",
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Luxe Sole — Luxury Footwear",
+    title: "ZTS Collections",
     description: "Handcrafted shoes for the modern connoisseur",
     images: ["https://luxesole.com/og-image.jpg"],
   },

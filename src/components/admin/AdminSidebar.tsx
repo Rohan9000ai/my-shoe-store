@@ -71,7 +71,7 @@ export default function AdminSidebar() {
           <div className="flex items-center justify-between border-b border-beige/10 px-6 py-6">
             <div>
               <h1 className="font-heading text-lg font-bold tracking-wide text-gold">
-                LUXE SOLE
+                ZTS Collections
               </h1>
               <p className="mt-1 text-[10px] uppercase tracking-widest text-beige/50">
                 Admin Control

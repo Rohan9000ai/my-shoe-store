@@ -51,20 +51,20 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_2fr]">
           {/* Brand */}
           <div>
-            <h3 className="font-heading text-lg font-bold text-gold">LUXE SOLE</h3>
+            <h3 className="font-heading text-lg font-bold text-gold">ZTS Collections</h3>
             <p className="mt-3 text-sm text-beige/70">
               Elevating the art of shoemaking with timeless, handcrafted designs.
               Each pair is meticulously constructed using heritage Italian
               techniques and the world&apos;s finest full-grain leathers.
             </p>
             <div className="mt-4 flex gap-4 text-beige/70">
-              <a href="https://instagram.com" aria-label="Instagram" target="_blank" rel="noreferrer" className="hover:text-gold transition-colors">
+              <a href="https://www.instagram.com/zts.collection?srtk=aWk3amh6ZXM1bGRl&utm_source=qr" aria-label="Instagram" target="_blank" rel="noreferrer" className="hover:text-gold transition-colors">
                 <InstagramIcon className="w-5 h-5" />
               </a>
-              <a href="https://facebook.com" aria-label="Facebook" target="_blank" rel="noreferrer" className="hover:text-gold transition-colors">
+              <a href="https://www.facebook.com/share/18LZJTwBxD/?mibextid=wwXIfr" aria-label="Facebook" target="_blank" rel="noreferrer" className="hover:text-gold transition-colors">
                 <FacebookIcon className="w-5 h-5" />
               </a>
-              <a href="https://tiktok.com" aria-label="TikTok" target="_blank" rel="noreferrer" className="hover:text-gold transition-colors">
+              <a href="https://www.tiktok.com/@zts_collection?_r=1&_t=ZS-9Ad38peIyP2" aria-label="TikTok" target="_blank" rel="noreferrer" className="hover:text-gold transition-colors">
                 <TikTokIcon className="w-5 h-5" />
               </a>
             </div>
@@ -102,8 +102,7 @@ export default function Footer() {
               Contact Info
             </h4>
             <ul className="mt-3 space-y-2 text-sm text-beige/70">
-              <li>concierge@luxesole.com</li>
-              {whatsappNumber && <li>{whatsappNumber}</li>}
+              <li>zts.collection07@gmail.com</li>
             </ul>
             <div className="mt-4 flex">
               <input
@@ -120,7 +119,7 @@ export default function Footer() {
 
         {/* Bottom */}
         <div className="mt-12 border-t border-beige/10 pt-6 text-center text-xs text-beige/50">
-          © {new Date().getFullYear()} LUXE SOLE. All rights reserved. Crafted for connoisseurs.
+          © {new Date().getFullYear()} ZTS Collections. All rights reserved. Crafted for connoisseurs.
         </div>
       </div>
     </footer>

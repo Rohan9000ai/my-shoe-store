@@ -1,4 +1,4 @@
-# 👞 Luxe Sole — Luxury Footwear E-Commerce
+# 👞 ZTS Collections — Luxury Footwear E-Commerce
 
 A modern, full-stack e-commerce platform for handcrafted luxury footwear, built with Next.js 14, TypeScript, Prisma, and Supabase.
 
@@ -66,7 +66,7 @@ A modern, full-stack e-commerce platform for handcrafted luxury footwear, built 
 ---
 
 ## 📁 Project Structure
-luxe-sole/
+ZTS Collections/
 ├── prisma/
 │ ├── schema.prisma # Database schema
 │ ├── seed.ts # Default data seeding
@@ -122,8 +122,8 @@ luxe-sole/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/luxe-sole.git
-cd luxe-sole
+git clone https://github.com/yourusername/ZTS Collections.git
+cd ZTS Collections
 
 npm install
 

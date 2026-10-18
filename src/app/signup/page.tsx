@@ -77,11 +77,11 @@ export default function SignupPage() {
       <div className="w-full max-w-md rounded-lg border border-brown/10 bg-white p-8 shadow-sm">
         <div className="mb-8 text-center">
           <h1 className="font-heading text-2xl font-bold tracking-wide text-gold">
-            LUXE SOLE
+            ZTS Collections
           </h1>
           <h2 className="mt-4 text-lg font-semibold text-espresso">Create Account</h2>
           <p className="mt-1 text-sm text-brown/70">
-            Join our Premium shoes collection
+            Join our Premium collection
           </p>
         </div>
 

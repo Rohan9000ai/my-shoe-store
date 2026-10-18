@@ -20,7 +20,7 @@ const DEFAULTS: SettingsValues = {
   tax_rate: "0",
   handling_fee: "0",
   whatsapp_number: "",
-  store_name: "Luxe Sole Store",
+  store_name: "ZTS Collections",
   store_email: "",
 };
 
@@ -100,7 +100,7 @@ export default function SettingsForm() {
     }
     window.open(
       `https://wa.me/${cleanNumber}?text=${encodeURIComponent(
-        "This is a test message from Luxe Sole Atelier Control."
+        "This is a test message from ZTS Collections."
       )}`,
       "_blank"
     );

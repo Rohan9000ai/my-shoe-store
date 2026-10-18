@@ -51,7 +51,7 @@ export default async function OrderConfirmationPage({
             Order Placed Successfully!
           </h1>
           <p className="mt-2 text-sm text-brown/60">
-            Thank you for choosing Luxe Sole. Master artisans have been notified, and your
+            Thank you for choosing ZTS Collections.  and your
             reservation box is being assembled.
           </p>
 
