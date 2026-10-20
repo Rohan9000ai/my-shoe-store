@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import FavoriteButton from "@/components/product/FavoriteButton";
 
 interface ProductCardProduct {
   id: string;
@@ -50,11 +51,21 @@ export default function ProductCard({ product }: { product: ProductCardProduct }
             No image
           </div>
         )}
-        {discount > 0 && (
+                {discount > 0 && (
           <span className="absolute left-2 top-2 rounded bg-red-500 px-2 py-0.5 text-[10px] font-bold uppercase text-white">
             Sale
           </span>
         )}
+
+        <FavoriteButton
+          product={{
+            productId: product.id,
+            name: product.name,
+            price,
+            discount,
+            imageUrl: thumbnail,
+          }}
+        />
       </div>
 
       <div className="p-3">

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useCart } from "@/hooks/useCart";
 import Button from "@/components/ui/Button";
 import SizeSelector from "@/components/product/SizeSelector";
+import CartAddedModal, { type AddedItem } from "@/components/cart/CartAddedModal";
 
 interface SizeOption {
   size: string;
@@ -20,8 +21,8 @@ interface AddToCartFormProps {
 }
 
 // Size selector + quantity stepper inline on the page, with the Add to
-// Cart button living in a sticky bar fixed to the bottom of the screen
-// so it's always reachable while scrolling the product.
+// Cart button in a sticky bar fixed to the bottom of the screen. After
+// adding, a cart window offers Checkout or Continue Shopping.
 export default function AddToCartForm({
   productId,
   name,
@@ -33,7 +34,8 @@ export default function AddToCartForm({
   const { addItem } = useCart();
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
-  const [added, setAdded] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [addedItem, setAddedItem] = useState<AddedItem | null>(null);
 
   const selectedStock = sizes.find((s) => s.size === selectedSize)?.stockQuantity ?? 0;
   const finalPrice = price - discount;
@@ -46,12 +48,14 @@ export default function AddToCartForm({
 
   const handleAddToCart = () => {
     if (!selectedSize) return;
+
     addItem(
       { productId, name, price, discount, size: selectedSize, imageUrl, maxStock: selectedStock },
       quantity
     );
-    setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
+
+    setAddedItem({ name, size: selectedSize, quantity, unitPrice: finalPrice, imageUrl });
+    setModalOpen(true);
   };
 
   return (
@@ -100,11 +104,17 @@ export default function AddToCartForm({
               onClick={handleAddToCart}
               disabled={!selectedSize || selectedStock === 0}
             >
-              {added ? "Added to Cart ✓" : !selectedSize ? "Select a Size" : "Add to Cart"}
+              {!selectedSize ? "Select a Size" : "Add to Cart"}
             </Button>
           </div>
         </div>
       </div>
+
+      <CartAddedModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        item={addedItem}
+      />
     </>
   );
 }

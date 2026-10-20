@@ -8,14 +8,16 @@ interface StickyCartButtonProps {
   // Lift the button higher so it clears the sticky Add to Cart bar
   // (used on the product detail page).
   raised?: boolean;
-  // Show the "Open cart to checkout" arrow callout when the cart has
-  // items (used on the homepage).
+  // Show an arrow callout pointing at the button when the cart has items.
   showHint?: boolean;
+  // Text inside the callout.
+  hintText?: string;
 }
 
 export default function StickyCartButton({
   raised = false,
   showHint = false,
+  hintText = "View Cart",
 }: StickyCartButtonProps) {
   const { itemCount, isHydrated } = useCart();
   const hasItems = isHydrated && itemCount > 0;
@@ -41,9 +43,12 @@ export default function StickyCartButton({
       {showHint && hasItems && (
         <Link
           href="/cart"
-          className="animate-hint-nudge relative rounded-md bg-espresso px-3 py-2 text-xs font-semibold text-beige shadow-lg"
+          className="animate-hint-nudge relative flex items-center gap-1.5 rounded-md bg-espresso px-3 py-2 text-xs font-semibold text-beige shadow-lg"
         >
-          Open cart to checkout
+          <span>{hintText}</span>
+          <span aria-hidden="true" className="text-sm leading-none">
+            →
+          </span>
           <span
             aria-hidden="true"
             className="absolute -right-1.5 top-1/2 h-3 w-3 -translate-y-1/2 rotate-45 bg-espresso"

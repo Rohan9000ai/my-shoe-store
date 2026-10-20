@@ -7,6 +7,7 @@ import WhatsAppBubble from "@/components/layout/WhatsAppBubble";
 import StickyCartButton from "@/components/layout/StickyCartButton";
 import ProductImageMagnifier from "@/components/product/ProductImageMagnifier";
 import AddToCartForm from "@/components/product/AddToCartForm";
+import FavoriteButton from "@/components/product/FavoriteButton";
 import { getProductById } from "@/services/product.service";
 import { buildMetadata, buildProductJsonLd } from "@/lib/seo";
 
@@ -101,6 +102,19 @@ export default async function ProductDetailPage({
               {product.description}
             </p>
 
+            <div className="mt-5">
+              <FavoriteButton
+                variant="full"
+                product={{
+                  productId: product.id,
+                  name: product.name,
+                  price,
+                  discount,
+                  imageUrl: product.images[0]?.imageUrl,
+                }}
+              />
+            </div>
+
             <div className="mt-6 border-t border-brown/10 pt-6">
               <AddToCartForm
                 productId={product.id}
@@ -121,7 +135,7 @@ export default async function ProductDetailPage({
             <div className="bg-espresso pb-20">
         <Footer />
       </div>
-      <StickyCartButton raised />
+      <StickyCartButton raised showHint />
       <WhatsAppBubble raised />
     </>
   );

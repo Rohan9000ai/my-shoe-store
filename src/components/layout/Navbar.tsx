@@ -6,6 +6,7 @@ import { useSession, signOut } from "next-auth/react";
 import { Bars3Icon, MagnifyingGlassIcon, HeartIcon } from "@heroicons/react/24/outline";
 import SidePanel from "@/components/layout/SidePanel";
 import CartButton from "@/components/layout/CartButton";
+import FavoritesMenu from "@/components/layout/FavoritesMenu";
 
 interface Category {
   id: string;
@@ -92,9 +93,10 @@ export default function Navbar() {
 
             {/* Right: icons + auth */}
             <div className="flex items-center gap-1 sm:gap-2">
-
+              <FavoritesMenu />
               {/* Cart Button */}
-              <CartButton />
+              {/* The cart button in navbar is commented */}
+              {/* <CartButton /> */}
 
               {/* Auth & Admin */}
               {status === "authenticated" ? (

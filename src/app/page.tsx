@@ -51,7 +51,7 @@ export default function HomePage() {
       <WhatsAppBubble />
 
       {/* Floating cart button + "Open cart to checkout" hint */}
-      <StickyCartButton showHint />
+      <StickyCartButton showHint hintText="Open cart to checkout" />
     </>
   );
 }
