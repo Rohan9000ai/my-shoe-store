@@ -10,6 +10,8 @@ import AddToCartForm from "@/components/product/AddToCartForm";
 import FavoriteButton from "@/components/product/FavoriteButton";
 import { getProductById } from "@/services/product.service";
 import { buildMetadata, buildProductJsonLd } from "@/lib/seo";
+import RelatedProducts from "@/components/product/RelatedProducts";
+export const revalidate = 60;
 
 export async function generateMetadata({
   params,
@@ -132,7 +134,12 @@ export default async function ProductDetailPage({
         </div>
       </main>
 
-            <div className="bg-espresso pb-20">
+      <RelatedProducts
+        productId={product.id}
+        categories={product.categories.map((c) => c.category)}
+      />
+
+      <div className="bg-espresso pb-20">
         <Footer />
       </div>
       <StickyCartButton raised showHint />

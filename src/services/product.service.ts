@@ -118,3 +118,24 @@ export async function updateProduct(id: string, data: ProductInput) {
 export async function deleteProduct(id: string) {
   return prisma.product.delete({ where: { id } });
 }
+// Other available products in a category, excluding the one currently
+// being viewed — used for the "More from ..." section on product pages.
+export async function getProductsByCategory(
+  categoryId: string,
+  excludeProductId: string,
+  limit = 12
+) {
+  return prisma.product.findMany({
+    where: {
+      status: "available",
+      id: { not: excludeProductId },
+      categories: { some: { categoryId } },
+    },
+    orderBy: { createdAt: "desc" },
+    take: limit,
+    include: {
+      images: { orderBy: { position: "asc" }, take: 1 },
+      sizes: true,
+    },
+  });
+}

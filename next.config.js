@@ -1,6 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // pdfkit reads its font files from disk at runtime, so it must not be
+  // bundled into the server build (this breaks PDF export on Vercel).
+  experimental: {
+    serverComponentsExternalPackages: ["pdfkit"],
+  },
   swcMinify: true,
   poweredByHeader: false,
   compress: true,

@@ -1,9 +1,10 @@
-import { Suspense, lazy } from "react";
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import HeroCarousel from "@/components/product/HeroCarousel";
+import CategoryRows from "@/components/product/CategoryRows";
 import StickyCartButton from "@/components/layout/StickyCartButton";
 import { buildMetadata } from "@/lib/seo";
 
@@ -12,21 +13,16 @@ export const metadata: Metadata = buildMetadata({
   path: "/",
 });
 
+// Rebuild the category rows from the database at most once a minute, so
+// new products show up without a redeploy.
+export const revalidate = 60;
+
 // ✅ Lazy load WhatsAppBubble - only loads when needed
 const WhatsAppBubble = dynamic(
   () => import("@/components/layout/WhatsAppBubble"),
   { 
     ssr: false,
     loading: () => null // Don't show anything on mobile until loaded
-  }
-);
-
-// ✅ Lazy load ProductGrid with proper loading state
-const ProductGrid = dynamic(
-  () => import("@/components/product/ProductGrid"),
-  {
-    loading: () => <ProductGridSkeleton />,
-    ssr: true, // Keep SSR for SEO
   }
 );
 
@@ -39,9 +35,9 @@ export default function HomePage() {
         {/* Hero with priority loading */}
         <HeroCarousel />
 
-        {/* Products with Suspense for streaming */}
+        {/* One sliding row per category, streamed in with Suspense */}
         <Suspense fallback={<ProductGridSkeleton />}>
-          <ProductGrid />
+          <CategoryRows />
         </Suspense>
       </main>
 

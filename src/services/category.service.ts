@@ -50,3 +50,27 @@ export async function createCategory(data: CategoryInput) {
 export async function deleteCategory(id: string) {
   return prisma.category.delete({ where: { id } });
 }
+// Categories that have at least one available product, each with its
+// newest products — used for the homepage category rows.
+export async function getCategoriesWithProducts(limit = 10) {
+  const categories = await prisma.category.findMany({
+    orderBy: { name: "asc" },
+    include: {
+      products: {
+        where: { product: { status: "available" } },
+        orderBy: { product: { createdAt: "desc" } },
+        take: limit,
+        include: {
+          product: {
+            include: {
+              images: { orderBy: { position: "asc" }, take: 1 },
+              sizes: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return categories.filter((category) => category.products.length > 0);
+}
