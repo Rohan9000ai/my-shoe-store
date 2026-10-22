@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-export const SITE_NAME = "Luxe Sole";
+export const SITE_NAME = "ZTS Collections";
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 export const DEFAULT_DESCRIPTION =
   "Handcrafted shoes for the modern connoisseur, tailored from premium selected calfskin and designed in Milan.";

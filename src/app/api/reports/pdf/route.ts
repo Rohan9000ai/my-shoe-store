@@ -5,6 +5,9 @@ import { reportQuerySchema } from "@/lib/validations";
 import { getReportSummary, type RangeKey } from "@/services/report.service";
 import { generateSalesReportPdf } from "@/lib/pdf";
 
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 // Admin-only: generates and downloads a PDF sales report for a given
 // date range, using the same report.service data as the on-screen page.
 export async function GET(request: Request) {
@@ -31,10 +34,10 @@ export async function GET(request: Request) {
       result.data.to
     );
 
-    const pdfBuffer = await generateSalesReportPdf(summary);
-    const fileName = `luxe-sole-sales-report-${result.data.range}.pdf`;
+    const pdfBytes = await generateSalesReportPdf(summary);
+    const fileName = `sales-report-${result.data.range}.pdf`;
 
-    return new NextResponse(new Uint8Array(pdfBuffer), {
+    return new NextResponse(new Uint8Array(pdfBytes), {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",
@@ -44,7 +47,12 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error("Generate report PDF error:", error);
     return NextResponse.json(
-      { message: "Something went wrong generating the PDF. Please try again." },
+      {
+        message: "Something went wrong generating the PDF. Please try again.",
+        // Admin-only endpoint, so showing the reason is safe. It makes any
+        // remaining failure easy to diagnose. You can remove this line later.
+        detail: error instanceof Error ? error.message : String(error),
+      },
       { status: 500 }
     );
   }

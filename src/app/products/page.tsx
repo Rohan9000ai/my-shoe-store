@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import WhatsAppBubble from "@/components/layout/WhatsAppBubble";
+import StickyCartButton from "@/components/layout/StickyCartButton";
 import ProductGrid from "@/components/product/ProductGrid";
 import { buildMetadata } from "@/lib/seo";
 
@@ -33,6 +34,7 @@ export default function ProductsPage() {
 
       <Footer />
       <WhatsAppBubble />
+      <StickyCartButton showHint />
     </>
   );
 }
