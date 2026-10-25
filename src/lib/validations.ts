@@ -157,7 +157,7 @@ export type OrderInput = z.infer<typeof orderSchema>;
 
 // Admin order status update — restricted to the OrderStatus enum values.
 export const orderStatusUpdateSchema = z.object({
-  status: z.enum(["pending", "confirmed", "shipped", "delivered", "cancelled"]),
+  status: z.enum(["pending", "processing", "packing", "out_for_delivery", "delivered", "cancelled"]),
 });
 
 export type OrderStatusUpdateInput = z.infer<typeof orderStatusUpdateSchema>;

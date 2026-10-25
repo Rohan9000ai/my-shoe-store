@@ -5,8 +5,9 @@ import { prisma } from "@/lib/prisma";
 const STATUS_TABS = [
   { label: "All", value: "" },
   { label: "Pending", value: "pending" },
-  { label: "Confirmed", value: "confirmed" },
-  { label: "Shipped", value: "shipped" },
+  { label: "Processing", value: "processing" },
+  { label: "Packing", value: "packing" },
+  { label: "Out for Delivery", value: "out_for_delivery" },
   { label: "Delivered", value: "delivered" },
   { label: "Cancelled", value: "cancelled" },
 ];

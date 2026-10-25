@@ -14,15 +14,29 @@ interface OrderRow {
 
 const STATUS_STYLES: Record<string, string> = {
   pending: "bg-yellow-100 text-yellow-700",
-  confirmed: "bg-blue-100 text-blue-700",
-  shipped: "bg-purple-100 text-purple-700",
+  processing: "bg-blue-100 text-blue-700",
+  packing: "bg-indigo-100 text-indigo-700",
+  out_for_delivery: "bg-purple-100 text-purple-700",
   delivered: "bg-green-100 text-green-700",
   cancelled: "bg-red-100 text-red-600",
+  // Older statuses, kept so old orders still look right.
+  confirmed: "bg-blue-100 text-blue-700",
+  shipped: "bg-purple-100 text-purple-700",
+};
+
+const STATUS_LABELS: Record<string, string> = {
+  pending: "Pending",
+  processing: "Processing",
+  packing: "Packing",
+  out_for_delivery: "Out for Delivery",
+  delivered: "Delivered",
+  cancelled: "Cancelled",
+  confirmed: "Confirmed",
+  shipped: "Shipped",
 };
 
 // Presentational orders table — matches the admin-orders design. Row
-// links to /admin/orders/[id] for the detail/status-update view, which
-// is a separate upcoming task.
+// links to /admin/orders/[id] for the detail/status-update view.
 export default function OrderTable({ orders }: { orders: OrderRow[] }) {
   return (
     <div className="overflow-x-auto rounded-lg border border-brown/10 bg-white shadow-sm">
@@ -74,11 +88,11 @@ export default function OrderTable({ orders }: { orders: OrderRow[] }) {
               </td>
               <td className="px-4 py-3">
                 <span
-                  className={`rounded-full px-2 py-1 text-xs font-semibold capitalize ${
+                  className={`rounded-full px-2 py-1 text-xs font-semibold ${
                     STATUS_STYLES[order.status] ?? "bg-brown/10 text-brown"
                   }`}
                 >
-                  {order.status}
+                  {STATUS_LABELS[order.status] ?? order.status}
                 </span>
               </td>
             </tr>

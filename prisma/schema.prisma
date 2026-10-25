@@ -26,6 +26,9 @@ enum OrderStatus {
   pending
   confirmed
   shipped
+  processing
+  packing
+  out_for_delivery
   delivered
   cancelled
 }
