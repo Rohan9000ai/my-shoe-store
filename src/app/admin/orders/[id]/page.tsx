@@ -66,16 +66,19 @@ export default async function AdminOrderDetailPage({
 
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
-          <div className="rounded-lg border border-brown/10 bg-white p-6 shadow-sm">
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-brown/40">
-              Customer Information
-            </h2>
-            <p className="mt-2 text-sm font-medium text-espresso">{order.name}</p>
-            <p className="text-sm text-brown/60">{order.phone}</p>
-            {order.user?.email && (
-              <p className="text-sm text-brown/60">{order.user.email}</p>
-            )}
-          </div>
+         <div className="rounded-lg border border-brown/20 bg-white p-5 shadow-sm">
+  <h2 className="text-xs font-bold uppercase tracking-wide text-espresso">
+    Customer Information
+  </h2>
+  <p className="mt-2 text-sm font-semibold text-espresso">{order.name}</p>
+  <p className="text-sm text-espresso">{order.phone}</p>
+  
+  {/* 👇 This is the block that shows the email or fallback */}
+  <p className="text-sm text-espresso mt-1">
+    <span className="text-brown/60">Email: </span>
+    {order.email ? order.email : <span className="text-brown/40 italic">Not provided</span>}
+  </p>
+</div>
 
           <div className="rounded-lg border border-brown/10 bg-white p-6 shadow-sm">
             <h2 className="text-xs font-semibold uppercase tracking-wide text-brown/40">

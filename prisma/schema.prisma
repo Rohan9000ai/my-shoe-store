@@ -141,6 +141,7 @@ model Order {
   country        String        @default("Pakistan") @db.VarChar(50)
   city           String        @db.VarChar(100)
   address        String        @db.Text
+  email          String?       @db.VarChar(100)
   createdAt      DateTime      @default(now()) @map("created_at")
 
   user           User?         @relation(fields: [userId], references: [id])

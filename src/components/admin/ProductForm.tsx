@@ -283,8 +283,8 @@ export default function ProductForm({
               onChange={(e) => setStatus(e.target.value as "available" | "unavailable")}
               className="w-full rounded-md border border-brown/20 bg-white px-4 py-3 text-sm text-espresso focus:outline-none focus:ring-2 focus:ring-gold/60"
             >
-              <option value="available">Active</option>
-              <option value="unavailable">Draft / Unavailable</option>
+            <option value="available">Available</option>
+<option value="unavailable">Unavailable (hidden from store)</option>
             </select>
           </div>
 

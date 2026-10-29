@@ -66,7 +66,8 @@ export default async function ProductDetailPage({
       />
       <Navbar />
 
-      <main className="mx-auto max-w-7xl px-4 py-8">
+      {/* 👇 Added pb-24 sm:pb-0 here so the sticky bar doesn't cover content on mobile */}
+      <main className="mx-auto max-w-7xl px-4 py-8 pb-24 sm:pb-0">
         <nav className="mb-4 text-xs text-brown/50">
           <Link href="/" className="hover:text-gold">
             Home
@@ -82,7 +83,11 @@ export default async function ProductDetailPage({
         </nav>
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-          <ProductImageMagnifier images={product.images} productName={product.name} />
+          <ProductImageMagnifier
+            images={product.images}
+            productName={product.name}
+            outOfStock={totalStock <= 0}
+          />
 
           <div>
             <h1 className="font-heading text-2xl font-bold text-espresso sm:text-3xl">
@@ -124,6 +129,7 @@ export default async function ProductDetailPage({
                 price={price}
                 discount={discount}
                 imageUrl={product.images[0]?.imageUrl}
+                outOfStock={totalStock <= 0}
                 sizes={product.sizes.map((s) => ({
                   size: s.size,
                   stockQuantity: s.stockQuantity,

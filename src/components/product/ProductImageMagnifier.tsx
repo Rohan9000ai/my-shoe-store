@@ -11,14 +11,17 @@ interface ProductImage {
 interface ProductImageMagnifierProps {
   images: ProductImage[];
   productName: string;
+  outOfStock?: boolean;
 }
 
 // Main image with hover-to-zoom magnifier (desktop only, since hover
 // doesn't apply on touch devices) plus a thumbnail strip to switch
-// between images — matches the product-detail-page design.
+// between images — matches the product-detail-page design. Shows an
+// "Out of Stock" label on the image when the product is sold out.
 export default function ProductImageMagnifier({
   images,
   productName,
+  outOfStock = false,
 }: ProductImageMagnifierProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isZooming, setIsZooming] = useState(false);
@@ -68,6 +71,12 @@ export default function ProductImageMagnifier({
               backgroundPosition: `${zoomPosition.x}% ${zoomPosition.y}%`,
             }}
           />
+        )}
+
+        {outOfStock && (
+          <span className="pointer-events-none absolute left-3 top-3 rounded bg-espresso px-3 py-1 text-xs font-bold uppercase tracking-wide text-beige shadow-lg">
+            Out of Stock
+          </span>
         )}
       </div>
 

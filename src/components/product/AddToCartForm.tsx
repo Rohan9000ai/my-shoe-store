@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useCart } from "@/hooks/useCart";
-import Button from "@/components/ui/Button";
+import { useRouter } from "next/navigation";
 import SizeSelector from "@/components/product/SizeSelector";
 import CartAddedModal, { type AddedItem } from "@/components/cart/CartAddedModal";
 
@@ -18,11 +18,9 @@ interface AddToCartFormProps {
   discount: number;
   imageUrl?: string;
   sizes: SizeOption[];
+  outOfStock?: boolean;
 }
 
-// Size selector + quantity stepper inline on the page, with the Add to
-// Cart button in a sticky bar fixed to the bottom of the screen. After
-// adding, a cart window offers Checkout or Continue Shopping.
 export default function AddToCartForm({
   productId,
   name,
@@ -30,8 +28,11 @@ export default function AddToCartForm({
   discount,
   imageUrl,
   sizes,
+  outOfStock = false,
 }: AddToCartFormProps) {
   const { addItem } = useCart();
+  const router = useRouter();
+  
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [modalOpen, setModalOpen] = useState(false);
@@ -47,7 +48,7 @@ export default function AddToCartForm({
   };
 
   const handleAddToCart = () => {
-    if (!selectedSize) return;
+    if (outOfStock || !selectedSize) return;
 
     addItem(
       { productId, name, price, discount, size: selectedSize, imageUrl, maxStock: selectedStock },
@@ -58,9 +59,32 @@ export default function AddToCartForm({
     setModalOpen(true);
   };
 
+  const handleBuyNow = () => {
+    if (outOfStock || !selectedSize) return;
+
+    // Add to cart, then go straight to checkout
+    addItem(
+      { productId, name, price, discount, size: selectedSize, imageUrl, maxStock: selectedStock },
+      quantity
+    );
+    router.push("/checkout");
+  };
+
+  const buttonLabel = outOfStock
+    ? "Out of Stock"
+    : !selectedSize
+      ? "Select a Size"
+      : "Add to Cart";
+
   return (
     <>
       <div className="space-y-4">
+        {outOfStock && (
+          <p className="rounded-md bg-red-50 px-3 py-2 text-sm font-medium text-red-600">
+            This product is currently out of stock.
+          </p>
+        )}
+
         <SizeSelector sizes={sizes} selectedSize={selectedSize} onSelect={handleSelectSize} />
 
         <div className="flex items-center gap-3">
@@ -87,26 +111,41 @@ export default function AddToCartForm({
         </div>
       </div>
 
-      {/* Sticky Add to Cart bar */}
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-brown/10 bg-beige/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3">
-          <div className="hidden min-w-0 flex-1 sm:block">
-            <p className="truncate text-sm font-semibold text-espresso">{name}</p>
-            <p className="text-xs text-brown/60">
-              PKR {finalPrice.toLocaleString()}
-              {selectedSize ? ` · Size ${selectedSize}` : " · Select a size"}
-            </p>
-          </div>
+      {/* Sticky Bottom Bar */}
+      {/* Sticky Bottom Bar - Transparent Background */}
+      {/* Sticky Bottom Bar - Transparent Background */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-transparent p-4 pb-6 pointer-events-none">
+        
+        <div className="max-w-7xl mx-auto grid grid-cols-2 gap-4 pointer-events-auto">
+          
+          {/* Buy It Now Button */}
+          <button
+            type="button"
+            onClick={handleBuyNow}
+            className={`w-full py-3.5 text-sm font-semibold uppercase tracking-wide rounded-md transition-all duration-200 shadow-lg border-2 ${
+              selectedSize && !outOfStock
+                ? "bg-white border-espresso text-espresso hover:bg-beige"
+                : "bg-beige/80 border-brown/20 text-brown/50 cursor-not-allowed backdrop-blur-sm"
+            }`}
+            disabled={!selectedSize || outOfStock}
+          >
+            Buy It Now
+          </button>
 
-          <div className="w-full sm:w-64">
-            <Button
-              type="button"
-              onClick={handleAddToCart}
-              disabled={!selectedSize || selectedStock === 0}
-            >
-              {!selectedSize ? "Select a Size" : "Add to Cart"}
-            </Button>
-          </div>
+          {/* Add to Cart Button */}
+          <button
+            type="button"
+            onClick={handleAddToCart}
+            className={`w-full py-3.5 text-sm font-semibold uppercase tracking-wide rounded-md transition-all duration-200 shadow-lg ${
+              selectedSize && !outOfStock
+                ? "bg-gold text-espresso hover:bg-gold/90"
+                : "bg-gold/40 text-espresso/50 cursor-not-allowed"
+            }`}
+            disabled={!selectedSize || outOfStock}
+          >
+            {buttonLabel}
+          </button>
+          
         </div>
       </div>
 

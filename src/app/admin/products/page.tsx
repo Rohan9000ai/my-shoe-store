@@ -169,15 +169,19 @@ export default function AdminProductsPage() {
                   </td>
                   <td className="px-4 py-3">{totalStock}</td>
                   <td className="px-4 py-3">
-                    <span
-                      className={`rounded-full px-2 py-1 text-xs font-semibold ${
-                        product.status === "available"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-red-100 text-red-600"
-                      }`}
-                    >
-                      {product.status === "available" ? "Active" : "Unavailable"}
-                    </span>
+                                        {product.status !== "available" ? (
+                      <span className="rounded-full bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-600">
+                        Unavailable
+                      </span>
+                    ) : totalStock <= 0 ? (
+                      <span className="rounded-full bg-red-100 px-2 py-1 text-xs font-semibold text-red-600">
+                        Out of Stock
+                      </span>
+                    ) : (
+                      <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-semibold text-green-700">
+                        Available
+                      </span>
+                    )}
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">

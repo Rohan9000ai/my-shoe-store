@@ -19,6 +19,7 @@ export default function CheckoutPage() {
   const [formData, setFormData] = useState<AddressFormValues>({
     name: "",
     phone: "",
+    email: "",
     country: "Pakistan",
     city: "",
     address: "",

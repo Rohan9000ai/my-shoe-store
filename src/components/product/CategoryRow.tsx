@@ -10,7 +10,7 @@ interface RowProduct {
   price: number;
   discount: number | null;
   images: { imageUrl: string }[];
-  sizes: { size: string }[];
+  sizes: { size: string; stockQuantity?: number }[];
 }
 
 interface CategoryRowProps {

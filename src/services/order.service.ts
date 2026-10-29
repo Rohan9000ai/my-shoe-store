@@ -12,6 +12,7 @@ interface ShippingInput {
   name: string;
   phone: string;
   country: string;
+  email?: string;
   city: string;
   address: string;
 }
@@ -133,6 +134,7 @@ export async function createOrder(input: CreateOrderInput) {
         paymentMethod,
         name: shipping.name,
         phone: shipping.phone,
+        email: shipping.email || null,
         country: shipping.country,
         city: shipping.city,
         address: shipping.address,

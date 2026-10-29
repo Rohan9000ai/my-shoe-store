@@ -123,6 +123,7 @@ export type CategoryInput = z.infer<typeof categorySchema>;
 export const checkoutAddressSchema = z.object({
   name: z.string().min(1, "Full name is required").max(100, "Name must be under 100 characters"),
   phone: z.string().regex(phoneRegex, "Enter a valid phone number (e.g. +923001234567)"),
+  email: z.string().email("Invalid email address").optional().or(z.literal("")),
   country: z.string().min(1, "Country is required"),
   city: z.string().min(1, "City is required"),
   address: z.string().min(1, "Complete address is required"),

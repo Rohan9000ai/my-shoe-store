@@ -1,9 +1,7 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import FavoriteButton from "@/components/product/FavoriteButton";
+import { isOutOfStock } from "@/lib/stock";
 
 interface ProductCardProduct {
   id: string;
@@ -11,22 +9,22 @@ interface ProductCardProduct {
   price: number | string;
   discount?: number | string | null;
   images: { imageUrl: string }[];
-  sizes: { size: string }[];
+  // stockQuantity is optional so older callers still type-check; when it
+  // is missing, the product is treated as in stock.
+  sizes: { size: string; stockQuantity?: number }[];
 }
 
 // Matches the product-card design: image, discount badge, name, price
 // (with strikethrough original when discounted), size hint, hover effect.
+// Out-of-stock products stay visible but get a dimmed image and an
+// "Out of Stock" label.
 export default function ProductCard({ product }: { product: ProductCardProduct }) {
-  const [imageError, setImageError] = useState(false);
-  
   const price = Number(product.price);
   const discount = product.discount ? Number(product.discount) : 0;
   const finalPrice = discount > 0 ? price - discount : price;
   const thumbnail = product.images[0]?.imageUrl;
   const sizeLabels = product.sizes.map((s) => s.size);
-
-  // ✅ Check if image is from Cloudinary
-  const isCloudinary = thumbnail?.includes("cloudinary.com");
+  const outOfStock = isOutOfStock(product.sizes);
 
   return (
     <Link
@@ -34,24 +32,29 @@ export default function ProductCard({ product }: { product: ProductCardProduct }
       className="group block overflow-hidden rounded-lg border border-brown/10 bg-white shadow-sm transition-shadow hover:shadow-md"
     >
       <div className="relative aspect-square overflow-hidden bg-brown/5">
-        {thumbnail && !imageError ? (
+        {thumbnail ? (
           <Image
             src={thumbnail}
             alt={product.name}
             fill
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
             className="object-cover transition-transform duration-300 group-hover:scale-105"
-            // ✅ Handle image errors gracefully
-            onError={() => setImageError(true)}
-            // ✅ Use unoptimized for Cloudinary in development
-            unoptimized={isCloudinary && process.env.NODE_ENV === 'development'}
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-xs text-brown/30">
             No image
           </div>
         )}
-                {discount > 0 && (
+
+        {outOfStock && (
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-white/55">
+            <span className="rounded bg-espresso px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-beige shadow-lg">
+              Out of Stock
+            </span>
+          </div>
+        )}
+
+        {discount > 0 && !outOfStock && (
           <span className="absolute left-2 top-2 rounded bg-red-500 px-2 py-0.5 text-[10px] font-bold uppercase text-white">
             Sale
           </span>
@@ -82,7 +85,7 @@ export default function ProductCard({ product }: { product: ProductCardProduct }
           )}
         </div>
 
-        {sizeLabels.length > 0 && (
+        {!outOfStock && sizeLabels.length > 0 && (
           <p className="mt-1 truncate text-xs text-brown/40">
             Sizes: {sizeLabels.join(", ")}
           </p>

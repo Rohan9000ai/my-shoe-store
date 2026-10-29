@@ -28,7 +28,10 @@ export default async function CategoryRows() {
             price: Number(product.price),
             discount: product.discount ? Number(product.discount) : null,
             images: product.images.map((image) => ({ imageUrl: image.imageUrl })),
-            sizes: product.sizes.map((size) => ({ size: size.size })),
+            sizes: product.sizes.map((size) => ({
+              size: size.size,
+              stockQuantity: size.stockQuantity,
+            })),
           }))}
         />
       ))}
