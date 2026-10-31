@@ -1,122 +1,94 @@
-"use client";
-
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import ProductRowActions from "@/components/admin/ProductRowActions";
+import { prisma } from "@/lib/prisma";
 
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  status: string;
-  images: { imageUrl: string }[];
-  sizes: { stockQuantity: number }[];
-}
+// Always read fresh data, so a status change shows up immediately.
+export const dynamic = "force-dynamic";
 
-export default function AdminProductsPage() {
-  const router = useRouter();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+type Filter = "" | "available" | "unavailable" | "out_of_stock";
 
-  // Fetch products on mount
-  useEffect(() => {
-    fetchProducts();
-  }, []);
+const TABS: { label: string; value: Filter }[] = [
+  { label: "All", value: "" },
+  { label: "Available", value: "available" },
+  { label: "Unavailable", value: "unavailable" },
+  { label: "Out of Stock", value: "out_of_stock" },
+];
 
-  const fetchProducts = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch("/api/products");
-      if (!response.ok) throw new Error("Failed to fetch products");
-      const data = await response.json();
-      setProducts(data.products || []);
-    } catch (err) {
-      setError("Failed to load products");
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+export default async function AdminProductsPage({
+  searchParams,
+}: {
+  searchParams: { status?: string };
+}) {
+  const requested = searchParams.status ?? "";
+  const filter: Filter = TABS.some((tab) => tab.value === requested)
+    ? (requested as Filter)
+    : "";
+
+  // Every product, whatever its status — nothing is filtered out in the
+  // database query, so Unavailable products always stay in this list.
+  const products = await prisma.product.findMany({
+    orderBy: { createdAt: "desc" },
+    include: {
+      images: { orderBy: { position: "asc" }, take: 1 },
+      sizes: true,
+    },
+  });
+
+  const rows = products.map((product) => {
+    const totalStock = product.sizes.reduce((sum, size) => sum + size.stockQuantity, 0);
+    const state: Exclude<Filter, ""> =
+      product.status !== "available"
+        ? "unavailable"
+        : totalStock <= 0
+          ? "out_of_stock"
+          : "available";
+
+    return { product, totalStock, state };
+  });
+
+  const counts: Record<string, number> = {
+    all: rows.length,
+    available: rows.filter((row) => row.state === "available").length,
+    unavailable: rows.filter((row) => row.state === "unavailable").length,
+    out_of_stock: rows.filter((row) => row.state === "out_of_stock").length,
   };
 
-  // Delete product
-  const handleDelete = async (productId: string, productName: string) => {
-    if (!confirm(`Are you sure you want to delete "${productName}"?`)) return;
-    
-    try {
-      const response = await fetch(`/api/products/${productId}`, {
-        method: "DELETE",
-      });
-      if (response.ok) {
-        await fetchProducts();
-        router.refresh();
-      } else {
-        alert("Failed to delete product");
-      }
-    } catch (error) {
-      alert("Error deleting product");
-    }
-  };
-
-  // Toggle product status
-  const handleToggleStatus = async (productId: string, currentStatus: string) => {
-    const newStatus = currentStatus === "available" ? "unavailable" : "available";
-    try {
-      const response = await fetch(`/api/products/${productId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus }),
-      });
-      if (response.ok) {
-        await fetchProducts();
-        router.refresh();
-      }
-    } catch (error) {
-      alert("Error updating product status");
-    }
-  };
-
-  // Loading state
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gold"></div>
-      </div>
-    );
-  }
-
-  // Error state
-  if (error) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-red-500">{error}</p>
-        <button
-          onClick={fetchProducts}
-          className="mt-4 px-4 py-2 bg-gold text-espresso rounded hover:bg-gold/90"
-        >
-          Retry
-        </button>
-      </div>
-    );
-  }
+  const visible = filter ? rows.filter((row) => row.state === filter) : rows;
 
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="font-heading text-2xl font-bold text-espresso">
-          Products Management
-        </h1>
+        <h1 className="font-heading text-2xl font-bold text-espresso">Products Management</h1>
         <Link
           href="/admin/products/new"
-          className="rounded-md bg-gold px-4 py-2 text-sm font-semibold uppercase tracking-wide text-espresso hover:bg-gold/90 transition-colors"
+          className="rounded-md bg-gold px-4 py-2 text-sm font-semibold uppercase tracking-wide text-espresso hover:bg-gold/90"
         >
           + Add New Product
         </Link>
       </div>
 
-      <div className="mt-6 overflow-x-auto rounded-lg border border-brown/10 bg-white shadow-sm">
+      <div className="mt-4 flex flex-wrap gap-2">
+        {TABS.map((tab) => {
+          const isActive = filter === tab.value;
+          return (
+            <Link
+              key={tab.label}
+              href={tab.value ? `/admin/products?status=${tab.value}` : "/admin/products"}
+              className={`rounded-md px-3 py-2 text-sm font-medium ${
+                isActive ? "bg-espresso text-beige" : "bg-white text-brown hover:bg-brown/5"
+              }`}
+            >
+              {tab.label}{" "}
+              <span className={isActive ? "text-gold" : "text-brown/40"}>
+                {counts[tab.value || "all"]}
+              </span>
+            </Link>
+          );
+        })}
+      </div>
+
+      <div className="mt-4 overflow-x-auto rounded-lg border border-brown/10 bg-white shadow-sm">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-brown/10 text-xs uppercase tracking-wide text-brown/50">
             <tr>
@@ -129,23 +101,21 @@ export default function AdminProductsPage() {
             </tr>
           </thead>
           <tbody>
-            {products.length === 0 && (
+            {visible.length === 0 && (
               <tr>
                 <td colSpan={6} className="px-4 py-10 text-center text-brown/40">
-                  No products yet. Click &quot;Add New Product&quot; to create your first one.
+                  {rows.length === 0
+                    ? 'No products yet. Click "Add New Product" to create your first one.'
+                    : "No products in this view."}
                 </td>
               </tr>
             )}
 
-            {products.map((product) => {
-              const totalStock = product.sizes?.reduce(
-                (sum, size) => sum + size.stockQuantity,
-                0
-              ) || 0;
-              const thumbnail = product.images?.[0]?.imageUrl;
+            {visible.map(({ product, totalStock, state }) => {
+              const thumbnail = product.images[0]?.imageUrl;
 
               return (
-                <tr key={product.id} className="border-b border-brown/5 last:border-0 hover:bg-beige/20 transition-colors">
+                <tr key={product.id} className="border-b border-brown/5 last:border-0">
                   <td className="px-4 py-3">
                     {thumbnail ? (
                       <Image
@@ -156,53 +126,35 @@ export default function AdminProductsPage() {
                         className="h-12 w-12 rounded-md object-cover"
                       />
                     ) : (
-                      <div className="h-12 w-12 rounded-md bg-brown/10 flex items-center justify-center">
-                        <span className="text-xs text-brown/40">No image</span>
-                      </div>
+                      <div className="h-12 w-12 rounded-md bg-brown/10" />
                     )}
                   </td>
-                  <td className="px-4 py-3 font-medium text-espresso">
-                    {product.name}
-                  </td>
-                  <td className="px-4 py-3">
-                    PKR {Number(product.price).toLocaleString()}
-                  </td>
+                  <td className="px-4 py-3 font-medium text-espresso">{product.name}</td>
+                  <td className="px-4 py-3">PKR {Number(product.price).toLocaleString()}</td>
                   <td className="px-4 py-3">{totalStock}</td>
                   <td className="px-4 py-3">
-                                        {product.status !== "available" ? (
+                    {state === "unavailable" && (
                       <span className="rounded-full bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-600">
                         Unavailable
                       </span>
-                    ) : totalStock <= 0 ? (
+                    )}
+                    {state === "out_of_stock" && (
                       <span className="rounded-full bg-red-100 px-2 py-1 text-xs font-semibold text-red-600">
                         Out of Stock
                       </span>
-                    ) : (
+                    )}
+                    {state === "available" && (
                       <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-semibold text-green-700">
                         Available
                       </span>
                     )}
                   </td>
                   <td className="px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      {/* Edit button */}
-                      <Link
-                        href={`/admin/products/${product.id}`}
-                        className="p-2 text-brown hover:text-gold transition-colors rounded-lg hover:bg-beige/50"
-                        aria-label={`Edit ${product.name}`}
-                      >
-                        <PencilIcon className="w-4 h-4" />
-                      </Link>
-                      
-                      {/* Delete button */}
-                      <button
-                        className="p-2 text-red-400 hover:text-red-600 transition-colors rounded-lg hover:bg-red-50"
-                        aria-label={`Delete ${product.name}`}
-                        onClick={() => handleDelete(product.id, product.name)}
-                      >
-                        <TrashIcon className="w-4 h-4" />
-                      </button>
-                    </div>
+                    <ProductRowActions
+                      productId={product.id}
+                      productName={product.name}
+                      status={product.status}
+                    />
                   </td>
                 </tr>
               );

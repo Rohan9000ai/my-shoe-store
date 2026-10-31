@@ -170,4 +170,9 @@ export const reportQuerySchema = z.object({
   to: z.string().optional(),
 });
 
-export type ReportQueryInput = z.infer<typeof reportQuerySchema>;
+export type ReportQueryInput = z.infer<typeof reportQuerySchema>;// Availability toggle from the admin product list.
+export const productStatusSchema = z.object({
+  status: z.enum(["available", "unavailable"]),
+});
+
+export type ProductStatusInput = z.infer<typeof productStatusSchema>;
