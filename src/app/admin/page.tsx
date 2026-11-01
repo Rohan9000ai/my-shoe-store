@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import SalesChart from "@/components/admin/SalesChart";
+import OrderBoard from "@/components/admin/OrderBoard";
 import { getDashboardStats, getDailySales } from "@/services/dashboard.service";
 
 // Always read fresh numbers from the database. Without this, Vercel can
@@ -134,6 +135,7 @@ export default async function AdminDashboardPage() {
         />
       </div>
 
+            <OrderBoard />
       <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="rounded-lg border border-brown/10 bg-white p-6 shadow-sm lg:col-span-2">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-brown/50">
