@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import type { ProductInput, ProductQueryInput } from "@/lib/validations";
 import type { Prisma } from "@prisma/client";
+import { cache } from "react";
 
 // Lists products with optional filters (category slug, search, price range,
 // status) and pagination. Defaults to "available" only, since this powers
@@ -139,3 +140,6 @@ export async function getProductsByCategory(
     },
   });
 }
+// One shared lookup per page visit: the page and its metadata both ask for
+// the same product, and this makes them share a single database query.
+export const getProductByIdCached = cache(getProductById);

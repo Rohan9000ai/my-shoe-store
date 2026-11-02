@@ -8,10 +8,32 @@ import StickyCartButton from "@/components/layout/StickyCartButton";
 import ProductImageMagnifier from "@/components/product/ProductImageMagnifier";
 import AddToCartForm from "@/components/product/AddToCartForm";
 import FavoriteButton from "@/components/product/FavoriteButton";
-import { getProductById } from "@/services/product.service";
+import { Suspense } from "react";
+import { prisma } from "@/lib/prisma";
+import { getProductByIdCached as getProductById } from "@/services/product.service";
 import { buildMetadata, buildProductJsonLd } from "@/lib/seo";
 import RelatedProducts from "@/components/product/RelatedProducts";
 export const revalidate = 60;
+
+// Pre-build the newest available products at deploy time, so opening one
+// serves a ready-made page. Products added later are built on their first
+// visit and cached the same way.
+export async function generateStaticParams() {
+  try {
+    const products = await prisma.product.findMany({
+      where: { status: "available" },
+      orderBy: { createdAt: "desc" },
+      take: 100,
+      select: { id: true },
+    });
+
+    return products.map((product) => ({ id: product.id }));
+  } catch {
+    // If the database can't be reached during the build, skip pre-building
+    // instead of failing the deploy; pages are then built on first visit.
+    return [];
+  }
+}
 
 export async function generateMetadata({
   params,
@@ -140,10 +162,12 @@ export default async function ProductDetailPage({
         </div>
       </main>
 
-      <RelatedProducts
-        productId={product.id}
-        categories={product.categories.map((c) => c.category)}
-      />
+      <Suspense fallback={<RelatedProductsFallback />}>
+        <RelatedProducts
+          productId={product.id}
+          categories={product.categories.map((c) => c.category)}
+        />
+      </Suspense>
 
       <div className="bg-espresso pb-20">
         <Footer />
@@ -151,5 +175,25 @@ export default async function ProductDetailPage({
       <StickyCartButton raised showHint />
       <WhatsAppBubble raised />
     </>
+  );
+}
+// Placeholder shown while "More from..." loads, so the product itself
+// appears first instead of waiting for it.
+function RelatedProductsFallback() {
+  return (
+    <section className="mx-auto max-w-7xl px-4 pb-12">
+      <div className="border-t border-brown/10 pt-8">
+        <div className="h-6 w-48 animate-pulse rounded bg-brown/10" />
+        <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+          {[...Array(4)].map((_, index) => (
+            <div key={index} className="animate-pulse">
+              <div className="aspect-square rounded-lg bg-brown/10" />
+              <div className="mt-2 h-3 w-3/4 rounded bg-brown/10" />
+              <div className="mt-1 h-4 w-1/3 rounded bg-brown/10" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
