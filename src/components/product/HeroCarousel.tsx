@@ -129,7 +129,7 @@ export default function HeroCarousel() {
 
   return (
     <section 
-      className={`relative min-h-[50vh] sm:min-h-[60vh] md:min-h-[70vh] overflow-hidden ${backgroundClass}`}
+  className={`relative min-h-[50vh] sm:min-h-[60vh] md:min-h-[70vh] overflow-hidden bg-beige ${backgroundClass}`}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
