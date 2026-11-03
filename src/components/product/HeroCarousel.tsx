@@ -122,9 +122,9 @@ export default function HeroCarousel() {
     return GRADIENT_CLASSES[activeIndex % GRADIENT_CLASSES.length];
   }, [activeIndex]);
 
-  // ✅ Always show gradient - both server and client
-  const backgroundClass = settings.backgroundImage && isClient
-    ? "bg-transparent"
+  // ✅ If an image is set, make transparent. If not, always show the gradient.
+  const backgroundClass = settings.backgroundImage 
+    ? "bg-transparent" 
     : `bg-gradient-to-br ${gradientClass}`;
 
   return (
