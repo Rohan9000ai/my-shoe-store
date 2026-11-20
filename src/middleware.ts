@@ -8,7 +8,7 @@ import type { NextRequest } from "next/server";
 // serverless functions that don't share memory, swap this Map for a
 // shared store like Redis/Upstash so counts stay consistent across them.
 const RATE_LIMIT_WINDOW_MS = 60_000;
-const GENERAL_API_LIMIT = 60; // most API routes
+const GENERAL_API_LIMIT = 300; // most API routes
 const ORDER_PLACEMENT_LIMIT = 15; // /api/orders — protects stock/DB writes
 const AUTH_LIMIT = 10; // login/register — brute-force / spam signup protection
 

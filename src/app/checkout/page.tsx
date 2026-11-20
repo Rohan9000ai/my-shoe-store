@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import WhatsAppBubble from "@/components/layout/WhatsAppBubble";
 import AddressForm, { type AddressFormValues } from "@/components/checkout/AddressForm";
 import OrderSummary from "@/components/checkout/OrderSummary";
+import UnavailableItems from "@/components/cart/UnavailableItems";
 import Button from "@/components/ui/Button";
 import { useCart } from "@/hooks/useCart";
 import { checkoutAddressSchema } from "@/lib/validations";
@@ -15,18 +16,25 @@ type AddressField = keyof AddressFormValues;
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, subtotal, clearCart } = useCart();
+  const { items, subtotal, clearCart, isHydrated, refreshAvailability } = useCart();
   const [formData, setFormData] = useState<AddressFormValues>({
     name: "",
     phone: "",
-    email: "",
     country: "Pakistan",
     city: "",
     address: "",
+    email: "",
   });
   const [errors, setErrors] = useState<Partial<Record<AddressField, string>>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+
+  // Always check stock and prices when checkout opens.
+  useEffect(() => {
+    if (isHydrated) {
+      void refreshAvailability();
+    }
+  }, [isHydrated, refreshAvailability]);
 
   const handleChange = (field: AddressField, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -76,6 +84,12 @@ export default function CheckoutPage() {
       if (!response.ok) {
         setFormError(data.message || "Something went wrong. Please try again.");
         setIsSubmitting(false);
+
+        // Stock or availability changed while the customer was checking
+        // out — refresh the cart so it shows what can really be bought.
+        if (response.status === 409) {
+          void refreshAvailability();
+        }
         return;
       }
 
@@ -93,6 +107,10 @@ export default function CheckoutPage() {
 
       <main className="mx-auto max-w-6xl px-4 py-8">
         <h1 className="font-heading text-2xl font-bold text-espresso">Secure Checkout</h1>
+
+        <div className="mt-4">
+          <UnavailableItems />
+        </div>
 
         <form
           onSubmit={handleSubmit}
@@ -122,7 +140,7 @@ export default function CheckoutPage() {
                 </div>
               </label>
               <p className="mt-3 text-xs text-brown/40">
-                For online bank transfers , please contact us on WhatsApp.
+                For online bank transfers or credit cards, please contact us on WhatsApp.
               </p>
             </div>
           </div>
@@ -143,21 +161,21 @@ export default function CheckoutPage() {
           </div>
         </form>
 
-        <div className="mt-9 grid grid-cols-1 gap-4 text-center text-xs text-brown/70 sm:grid-cols-3">
+        <div className="mt-10 grid grid-cols-1 gap-4 text-center text-xs text-brown/50 sm:grid-cols-3">
           <p>
-            100% Secure Packiging
-            <br /><br/>
-            Ensure Fast Delivery
+            🔒 100% Secure Checkout
+            <br />
+            Bank-Grade Encryption
           </p>
           <p>
-            For Any Issue & Query Contact On Whatsapp
-            <br /><br/>
-            Years Of Experience In Business
+            ↺ Free Worldwide Returns
+            <br />
+            Complimentary return shipping
           </p>
           <p>
             ✔ Authenticity Guaranteed
-            <br /><br/>
-             No Compromise On Quality
+            <br />
+            Hand-signed master craftsmanship
           </p>
         </div>
       </main>
